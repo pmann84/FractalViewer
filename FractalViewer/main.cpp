@@ -174,11 +174,17 @@ void handle_key_press(
 int main()
 {
    application app("Fractal Viewer");
-   app.init();
-   //sf::VideoMode desktop_res = sf::VideoMode::getDesktopMode();
-   //std::cout << "Starting Fractal Renderer with window resolution " << desktop_res.width << "x" << desktop_res.height << std::endl;
-   //sf::RenderWindow window(desktop_res, "Fractal Viewer");
-   //window.setFramerateLimit(0); // May not need this eventually
+
+   while (app.is_open())
+   {
+      app.handle_events();
+      app.update();
+
+      //app.draw();
+      app.display();
+   }
+
+   return 0;
 
    //// Render Loop
    //sf::Image image;
@@ -256,5 +262,5 @@ int main()
    //   window.draw(sprite);
    //   window.display();
    //}
-   return 0;
+   //return 0;
 }
