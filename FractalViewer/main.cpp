@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <complex>
+#include "application.h"
 
 struct fractal_resolution_info
 {
@@ -58,6 +59,10 @@ sf::Color get_julia_pixel_colour(unsigned int x, unsigned int y, const resolutio
       std::complex<double>(-2.0, -1.5),
       std::complex<double>(2.0, 1.5)
    };
+
+   // TODO: For zoom, need to recalculate the range, first get the mouse position
+   // and calculate the complex coordinate equivalent, then calculate the range of the
+   // original and add this to the mouse position to get the new range
    const std::complex<double> c(-0.8, 0.156);
    std::complex<double> zn = complex_from_pixel(
       x, 
@@ -166,98 +171,90 @@ void handle_key_press(
    }
 }
 
-//class application
-//{
-//public:
-//   application();
-//
-//
-//private:
-//   sf::RenderWindow m_window;
-//};
-
 int main()
 {
-   sf::VideoMode desktop_res = sf::VideoMode::getDesktopMode();
-   std::cout << "Starting Fractal Renderer with window resolution " << desktop_res.width << "x" << desktop_res.height << std::endl;
-   sf::RenderWindow window(desktop_res, "Fractal Viewer");
-   window.setFramerateLimit(0); // May not need this eventually
+   application app("Fractal Viewer");
+   app.init();
+   //sf::VideoMode desktop_res = sf::VideoMode::getDesktopMode();
+   //std::cout << "Starting Fractal Renderer with window resolution " << desktop_res.width << "x" << desktop_res.height << std::endl;
+   //sf::RenderWindow window(desktop_res, "Fractal Viewer");
+   //window.setFramerateLimit(0); // May not need this eventually
 
-   // Render Loop
-   sf::Image image;
-   image.create(desktop_res.width, desktop_res.height, sf::Color(0, 0, 0));
-   sf::Texture texture;
-   texture.setSmooth(true);
-   sf::Sprite sprite;
+   //// Render Loop
+   //sf::Image image;
+   //image.create(desktop_res.width, desktop_res.height, sf::Color(0, 0, 0));
+   //sf::Texture texture;
+   //texture.setSmooth(true);
+   //sf::Sprite sprite;
 
-   // Renderer state parameters
-   bool state_changed = true;
-   int fractal_resolution = 30;
-   fractal_resolution_info f_res{ 4, 1, 1000 };
-   double zoom = 1.0;
+   //// Renderer state parameters
+   //bool state_changed = true;
+   //int fractal_resolution = 30;
+   //fractal_resolution_info f_res{ 4, 1, 1000 };
+   //double zoom = 1.0;
 
-   while (window.isOpen())
-   {
-      // Poll Events
-      sf::Event event;
-      while (window.pollEvent(event))
-      {
-         switch (event.type)
-         {
-            case sf::Event::Closed:
-            {
-               window.close();
-               break;
-            }
-            case sf::Event::KeyPressed:
-            {
-               handle_key_press(event.key.code, fractal_resolution, f_res, zoom, state_changed);
-               break;
-            }
-            case sf::Event::MouseWheelMoved:
-            {
-               double zoom_factor = 1.3;
-               if (event.mouseWheel.delta == -1)
-               {
-                  zoom /= zoom_factor;
-                  if (zoom <= 1.0)
-                  {
-                     zoom = 1.0;
-                  }
-                  state_changed = true;
-               }
-               else
-               {
-                  zoom *= zoom_factor;
-                  state_changed = true;
-               }
-               std::cout << "mouse x: " << event.mouseWheel.x << std::endl;
-               std::cout << "mouse y: " << event.mouseWheel.y << std::endl;
-            }
-            default: break;
-         }
-      }
+   //while (window.isOpen())
+   //{
+   //   // Poll Events
+   //   sf::Event event;
+   //   while (window.pollEvent(event))
+   //   {
+   //      switch (event.type)
+   //      {
+   //         case sf::Event::Closed:
+   //         {
+   //            window.close();
+   //            break;
+   //         }
+   //         case sf::Event::KeyPressed:
+   //         {
+   //            handle_key_press(event.key.code, fractal_resolution, f_res, zoom, state_changed);
+   //            break;
+   //         }
+   //         case sf::Event::MouseWheelMoved:
+   //         {
+   //            double zoom_factor = 1.3;
+   //            if (event.mouseWheel.delta == -1)
+   //            {
+   //               zoom /= zoom_factor;
+   //               if (zoom <= 1.0)
+   //               {
+   //                  zoom = 1.0;
+   //               }
+   //               state_changed = true;
+   //            }
+   //            else
+   //            {
+   //               zoom *= zoom_factor;
+   //               state_changed = true;
+   //            }
+   //            std::cout << "mouse x: " << event.mouseWheel.x << std::endl;
+   //            std::cout << "mouse y: " << event.mouseWheel.y << std::endl;
+   //         }
+   //         default: break;
+   //      }
+   //   }
 
-      if (state_changed)
-      {
-         sf::Clock render_timer;
-         for (unsigned int i = 0; i < desktop_res.width; ++i)
-         {
-            for (unsigned int j = 0; j < desktop_res.height; ++j)
-            {
-               image.setPixel(i, j, get_julia_pixel_colour(i, j, resolution::from_video_mode(desktop_res), fractal_resolution, zoom));
-            }
-         }
-         sf::Time render_time = render_timer.getElapsedTime();
-         std::cout << "Fractal Render completed at resolution " << fractal_resolution << " with zoom " << zoom << " in " << render_time.asMilliseconds() << "ms." << std::endl;
-         texture.loadFromImage(image);
-         sprite.setTexture(texture);
-         state_changed = false;
-      }
+   //   if (state_changed)
+   //   {
+   //      sf::Clock render_timer;
+   //      for (unsigned int i = 0; i < desktop_res.width; ++i)
+   //      {
+   //         for (unsigned int j = 0; j < desktop_res.height; ++j)
+   //         {
+   //            image.setPixel(i, j, get_julia_pixel_colour(i, j, resolution::from_video_mode(desktop_res), fractal_resolution, zoom));
+   //         }
+   //      }
+   //      sf::Time render_time = render_timer.getElapsedTime();
+   //      std::cout << "Fractal Render completed at resolution " << fractal_resolution << " with zoom " << zoom << " in " << render_time.asMilliseconds() << "ms." << std::endl;
+   //      texture.loadFromImage(image);
+   //      sprite.setTexture(texture);
+   //      state_changed = false;
+   //   }
 
-      // Display
-      window.draw(sprite);
-      window.display();
-   }
+   //   // Display
+   //   window.draw(sprite);
+   //   window.display();
+   //}
    return 0;
 }
