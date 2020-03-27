@@ -180,18 +180,10 @@ int main()
       app.handle_events();
       app.update();
 
-      //app.draw();
       app.display();
    }
 
    return 0;
-
-   //// Render Loop
-   //sf::Image image;
-   //image.create(desktop_res.width, desktop_res.height, sf::Color(0, 0, 0));
-   //sf::Texture texture;
-   //texture.setSmooth(true);
-   //sf::Sprite sprite;
 
    //// Renderer state parameters
    //bool state_changed = true;
@@ -240,27 +232,6 @@ int main()
    //         default: break;
    //      }
    //   }
-
-   //   if (state_changed)
-   //   {
-   //      sf::Clock render_timer;
-   //      for (unsigned int i = 0; i < desktop_res.width; ++i)
-   //      {
-   //         for (unsigned int j = 0; j < desktop_res.height; ++j)
-   //         {
-   //            image.setPixel(i, j, get_julia_pixel_colour(i, j, resolution::from_video_mode(desktop_res), fractal_resolution, zoom));
-   //         }
-   //      }
-   //      sf::Time render_time = render_timer.getElapsedTime();
-   //      std::cout << "Fractal Render completed at resolution " << fractal_resolution << " with zoom " << zoom << " in " << render_time.asMilliseconds() << "ms." << std::endl;
-   //      texture.loadFromImage(image);
-   //      sprite.setTexture(texture);
-   //      state_changed = false;
-   //   }
-
-   //   // Display
-   //   window.draw(sprite);
-   //   window.display();
+   //    image.setPixel(i, j, get_julia_pixel_colour(i, j, resolution::from_video_mode(desktop_res), fractal_resolution, zoom));
    //}
-   //return 0;
 }
