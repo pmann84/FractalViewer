@@ -2,12 +2,14 @@
 
 #include <iostream>
 #include <windows.h>
+#include "fractal_generator_factory.h"
 
 application::application(std::string app_name)
    : m_app_name(app_name)
    , m_resolution(sf::VideoMode::getDesktopMode())
    , m_window(m_resolution, m_app_name)
    , m_state_changed(true)
+   , m_renderer(m_resolution, fractal_generator_factory::create_mandelbrot_generator())
 {
    m_window.setFramerateLimit(0); // May not need this eventually
    // No SFML call for this so need to resort to windows specific code
@@ -19,6 +21,15 @@ application::application(std::string app_name)
 bool application::is_open() const
 {
    return m_window.isOpen();
+}
+
+void application::set_pixel(unsigned x, unsigned y, std::array<unsigned, 4> colour)
+{
+   m_fractal_image.setPixel(
+      x, 
+      y, 
+      sf::Color(colour[0], colour[1], colour[2], colour[3])
+   );
 }
 
 void application::handle_events()
@@ -45,16 +56,8 @@ void application::update()
    if (m_state_changed)
    {
       sf::Clock render_timer;
-      for (unsigned int i = 0; i < m_resolution.width; ++i)
-      {
-         for (unsigned int j = 0; j < m_resolution.height; ++j)
-         {
-            unsigned int r = rand() % 255;
-            unsigned int g = rand() % 255;
-            unsigned int b = rand() % 255;
-            m_fractal_image.setPixel(i, j, sf::Color(r, g, b));
-         }
-      }
+      //auto set_pixel_func = std::bind(&application::set_pixel, *this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+      m_renderer.render(m_fractal_image);
       sf::Time render_time = render_timer.getElapsedTime();
       std::cout << "Fractal Render completed in " << render_time.asMilliseconds() << "ms." << std::endl;
 

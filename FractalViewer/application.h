@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "fractal_renderer.h"
 
 class application
 {
@@ -20,4 +21,8 @@ private:
    sf::Texture m_fractal_texture;
    sf::Sprite m_sprite;
    bool m_state_changed;
+
+   fractal_renderer m_renderer;
+
+   void set_pixel(unsigned int x, unsigned y, std::array<unsigned int, 4> colour);
 };

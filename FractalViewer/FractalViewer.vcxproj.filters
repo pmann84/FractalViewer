@@ -3,8 +3,16 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="application.cpp" />
+    <ClCompile Include="fractal_renderer.cpp" />
+    <ClCompile Include="mandelbrot_generator.cpp" />
+    <ClCompile Include="julia_generator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
+    <ClInclude Include="mandelbrot_generator.h" />
+    <ClInclude Include="fractal_generator.h" />
+    <ClInclude Include="fractal_renderer.h" />
+    <ClInclude Include="fractal_generator_factory.h" />
+    <ClInclude Include="julia_generator.h" />
   </ItemGroup>
 </Project>
