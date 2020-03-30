@@ -9,7 +9,8 @@ application::application(std::string app_name)
    , m_resolution(sf::VideoMode::getDesktopMode())
    , m_window(m_resolution, m_app_name)
    , m_state_changed(true)
-   , m_renderer(m_resolution, fractal_generator_factory::create_mandelbrot_generator())
+   , m_renderer(m_resolution, fractal_generator_factory::create_mandelbrot_generator(), m_fractal_resolution, m_fractal_zoom)
+   //, m_renderer(m_resolution, fractal_generator_factory::create_julia_generator({ -0.8, 0.156 }))
 {
    m_window.setFramerateLimit(0); // May not need this eventually
    // No SFML call for this so need to resort to windows specific code
@@ -23,14 +24,14 @@ bool application::is_open() const
    return m_window.isOpen();
 }
 
-void application::set_pixel(unsigned x, unsigned y, std::array<unsigned, 4> colour)
-{
-   m_fractal_image.setPixel(
-      x, 
-      y, 
-      sf::Color(colour[0], colour[1], colour[2], colour[3])
-   );
-}
+//void application::set_pixel(unsigned x, unsigned y, std::array<unsigned, 4> colour)
+//{
+//   m_fractal_image.setPixel(
+//      x, 
+//      y, 
+//      sf::Color(colour[0], colour[1], colour[2], colour[3])
+//   );
+//}
 
 void application::handle_events()
 {
@@ -40,6 +41,76 @@ void application::handle_events()
    {
       switch (event.type)
       {
+         case sf::Event::KeyPressed:
+         {
+            switch (event.key.code)
+            {
+               case sf::Keyboard::Q:
+               {
+                  m_fractal_resolution -= m_fractal_res_delta;
+                  if (m_fractal_resolution <= m_fractal_res_min)
+                  {
+                     m_fractal_resolution = m_fractal_res_min;
+                  }
+                  m_renderer.set_fractal_resolution(m_fractal_resolution);
+                  m_state_changed = true;
+                  break;
+               }
+               case sf::Keyboard::E:
+               {
+                  m_fractal_resolution += m_fractal_res_delta;
+                  if (m_fractal_resolution >= m_fractal_res_max)
+                  {
+                     m_fractal_resolution = m_fractal_res_max;
+                  }
+                  m_renderer.set_fractal_resolution(m_fractal_resolution);
+                  m_state_changed = true;
+                  break;
+               }
+               case sf::Keyboard::LBracket:
+               {
+                  m_fractal_zoom /= m_fractal_zoom_factor;
+                  if (m_fractal_zoom <= m_fractal_zoom_min)
+                  {
+                     m_fractal_zoom = m_fractal_zoom_min;
+                  }
+                  m_renderer.set_fractal_zoom(m_fractal_zoom);
+                  m_state_changed = true;
+                  break;
+               }
+               case sf::Keyboard::RBracket:
+               {
+                  m_fractal_zoom *= m_fractal_zoom_factor;
+                  m_renderer.set_fractal_zoom(m_fractal_zoom);
+                  m_state_changed = true;
+                  break;
+               }
+               default: break;
+            }
+            break;
+         }
+         case sf::Event::MouseWheelMoved:
+         {
+            if (event.mouseWheel.delta == -1)
+            {
+               m_fractal_zoom /= m_fractal_zoom_factor;
+               if (m_fractal_zoom <= m_fractal_zoom_min)
+               {
+                  m_fractal_zoom = m_fractal_zoom_min;
+               }
+               m_renderer.set_fractal_zoom(m_fractal_zoom);
+               m_state_changed = true;
+            }
+            else
+            {
+               m_fractal_zoom *= m_fractal_zoom_factor;
+               m_renderer.set_fractal_zoom(m_fractal_zoom);
+               m_state_changed = true;
+            }
+            std::cout << "mouse x: " << event.mouseWheel.x << std::endl;
+            std::cout << "mouse y: " << event.mouseWheel.y << std::endl;
+            break;
+         }
          case sf::Event::Closed:
          {
             m_window.close();
