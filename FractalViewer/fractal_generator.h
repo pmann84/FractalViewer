@@ -38,5 +38,13 @@ class fractal_generator
 public:
    virtual ~fractal_generator() = default;
 
-   virtual std::array<unsigned int, 4> get_pixel_color(unsigned int x, unsigned int y, const int fractal_resolution, const sf::VideoMode window_res) = 0;
+   virtual std::array<unsigned int, 4> get_pixel_color(unsigned int x, unsigned int y, const sf::VideoMode window_res) = 0;
+
+   void set_fractal_resolution(int fractal_resolution)
+   {
+      m_fractal_resolution = fractal_resolution;
+   }
+
+protected:
+   int  m_fractal_resolution = 127;
 };

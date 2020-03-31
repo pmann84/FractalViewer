@@ -23,13 +23,12 @@ public:
 
    void render(sf::Image& image);
 
-   void set_fractal_resolution(int resolution);
+   void set_fractal_resolution(int resolution) const;
    void set_fractal_zoom(double zoom);
 
 private:
    sf::VideoMode m_resolution;
    std::unique_ptr<fractal_generator> m_fractal_generator;
 
-   int m_fractal_resolution;
    double m_fractal_zoom;
 };
