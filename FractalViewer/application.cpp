@@ -7,11 +7,12 @@
 application::application(std::string app_name)
    : m_app_name(app_name)
    , m_resolution(sf::VideoMode::getDesktopMode())
-   , m_window(m_resolution, m_app_name)
+   , m_window(m_resolution, m_app_name, sf::Style::Fullscreen)
    , m_state_changed(true)
-   , m_renderer(m_resolution, fractal_generator_factory::create_mandelbrot_generator(), m_fractal_resolution, m_fractal_zoom)
-   //, m_renderer(m_resolution, fractal_generator_factory::create_julia_generator({ -0.8, 0.156 }))
+   //, m_renderer(m_resolution, fractal_generator_factory::create_mandelbrot_generator(m_resolution), m_fractal_resolution)
+   , m_renderer(m_resolution, fractal_generator_factory::create_julia_generator(m_resolution, { -0.8, 0.156 }), m_fractal_resolution)
 {
+   m_renderer.set_fractal_zoom({ 1.0, static_cast<int>(m_resolution.width) / 2, static_cast<int>(m_resolution.height) / 2 });
    m_window.setFramerateLimit(0); // May not need this eventually
    // No SFML call for this so need to resort to windows specific code
    ::ShowWindow(m_window.getSystemHandle(), SW_MAXIMIZE);
@@ -52,6 +53,7 @@ void application::handle_events()
                   {
                      m_fractal_resolution = m_fractal_res_min;
                   }
+                  std::cout << "Decreasing fractal resolution to " << m_fractal_resolution << std::endl;
                   m_renderer.set_fractal_resolution(m_fractal_resolution);
                   m_state_changed = true;
                   break;
@@ -63,25 +65,30 @@ void application::handle_events()
                   {
                      m_fractal_resolution = m_fractal_res_max;
                   }
+                  std::cout << "Increasing fractal resolution to " << m_fractal_resolution << std::endl;
                   m_renderer.set_fractal_resolution(m_fractal_resolution);
                   m_state_changed = true;
                   break;
                }
                case sf::Keyboard::LBracket:
                {
-                  m_fractal_zoom /= m_fractal_zoom_factor;
-                  if (m_fractal_zoom <= m_fractal_zoom_min)
+                  m_fractal_zoom *= m_fractal_zoom_factor;
+                  if (m_fractal_zoom >= m_fractal_zoom_min)
                   {
                      m_fractal_zoom = m_fractal_zoom_min;
                   }
-                  m_renderer.set_fractal_zoom(m_fractal_zoom);
+                  const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
+                  std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
+                  m_renderer.set_fractal_zoom(zoom);
                   m_state_changed = true;
                   break;
                }
                case sf::Keyboard::RBracket:
                {
-                  m_fractal_zoom *= m_fractal_zoom_factor;
-                  m_renderer.set_fractal_zoom(m_fractal_zoom);
+                  m_fractal_zoom /= m_fractal_zoom_factor;
+                  const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
+                  std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
+                  m_renderer.set_fractal_zoom(zoom);
                   m_state_changed = true;
                   break;
                }
@@ -98,17 +105,19 @@ void application::handle_events()
                {
                   m_fractal_zoom = m_fractal_zoom_min;
                }
-               m_renderer.set_fractal_zoom(m_fractal_zoom);
+               const zoom_action zoom{ m_fractal_zoom, event.mouseWheel.x, event.mouseWheel.y };
+               std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << event.mouseWheel.x << "," << event.mouseWheel.y << ")" << std::endl;
+               m_renderer.set_fractal_zoom(zoom);
                m_state_changed = true;
             }
             else
             {
                m_fractal_zoom *= m_fractal_zoom_factor;
-               m_renderer.set_fractal_zoom(m_fractal_zoom);
+               const zoom_action zoom{ m_fractal_zoom, event.mouseWheel.x, event.mouseWheel.y };
+               std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << event.mouseWheel.x << "," << event.mouseWheel.y << ")" << std::endl;
+               m_renderer.set_fractal_zoom(zoom);
                m_state_changed = true;
             }
-            std::cout << "mouse x: " << event.mouseWheel.x << std::endl;
-            std::cout << "mouse y: " << event.mouseWheel.y << std::endl;
             break;
          }
          case sf::Event::Closed:
@@ -126,10 +135,10 @@ void application::update()
    // Only update if we flag that the state has changed
    if (m_state_changed)
    {
-      sf::Clock render_timer;
+      const sf::Clock render_timer;
       //auto set_pixel_func = std::bind(&application::set_pixel, *this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
       m_renderer.render(m_fractal_image);
-      sf::Time render_time = render_timer.getElapsedTime();
+      const sf::Time render_time = render_timer.getElapsedTime();
       std::cout << "Fractal Render completed in " << render_time.asMilliseconds() << "ms." << std::endl;
 
       m_state_changed = false;

@@ -1,23 +1,19 @@
 #include "mandelbrot_generator.h"
+#include <iostream>
 
-mandelbrot_generator::mandelbrot_generator()
+mandelbrot_generator::mandelbrot_generator(sf::VideoMode window_res)
+   : fractal_generator(std::complex<double>(-3.0, -1.5),
+                       std::complex<double>(1.5, 1.5),
+                       window_res.width,
+                       window_res.height)
 {
 }
 
-std::array<unsigned int, 4> mandelbrot_generator::get_pixel_color(unsigned int x, unsigned int y, const sf::VideoMode window_res)
+std::array<unsigned int, 4> mandelbrot_generator::get_pixel_color(unsigned int x, unsigned int y)
 {
-   // Mandelbrot (-2.5 - i) to (1 + i)
-   // Get scaled mandelbrot coordinate z0
-   const complex_range<double> range {
-   std::complex<double>(-3.0, -1.5),
-   std::complex<double>(1.5, 1.5)
-   };
-   const std::complex<double> c = generator_utils::complex_from_pixel(
-      x, 
-      window_res.width, 
-      y, 
-      window_res.height, 
-      range);
+   const std::complex<double> c = complex_from_pixel(x, y);
+
+   //std::cout << "Complex coord: " << c << " at pixel (" << x << "," << y << ")" << std::endl;
    // Initialise iteration count to 0
    int iteration = 0;
    // Initialise z to 0

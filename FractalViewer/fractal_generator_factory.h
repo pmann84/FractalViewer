@@ -7,13 +7,13 @@
 class fractal_generator_factory
 {
 public:
-   static std::unique_ptr<fractal_generator> create_mandelbrot_generator()
+   static std::unique_ptr<fractal_generator> create_mandelbrot_generator(sf::VideoMode resolution)
    {
-      return std::make_unique<mandelbrot_generator>();
+      return std::make_unique<mandelbrot_generator>(resolution);
    }
 
-   static std::unique_ptr<fractal_generator> create_julia_generator(std::complex<double> c)
+   static std::unique_ptr<fractal_generator> create_julia_generator(sf::VideoMode resolution, std::complex<double> c)
    {
-      return std::make_unique<julia_generator>(c);
+      return std::make_unique<julia_generator>(resolution, c);
    }
 };

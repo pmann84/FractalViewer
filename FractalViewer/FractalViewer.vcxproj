@@ -91,6 +91,7 @@
     <ClInclude Include="fractal_generator_factory.h" />
     <ClInclude Include="julia_generator.h" />
     <ClInclude Include="mandelbrot_generator.h" />
+    <ClInclude Include="zoom_action.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
