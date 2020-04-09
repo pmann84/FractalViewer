@@ -2,8 +2,7 @@
 #include <array>
 #include <complex>
 
-#include <SFML/Window.hpp>
-#include "zoom_action.h"
+#include "input_actions.h"
 
 class complex_bounds
 {
@@ -32,6 +31,14 @@ public:
       const std::complex<double> new_centre = complex_from_pixel(z.x, x_res, z.y, y_res);
       m_min = new_centre - new_limits / 2.0;
       m_max = new_centre + new_limits / 2.0;
+   }
+
+   void offset(offset_action offset)
+   {
+      std::complex<double> delta = 0.1*(m_max - m_min);
+      std::complex<double> off{ offset.x * delta.real(), offset.y * delta.imag() };
+      m_min += off;
+      m_max += off;
    }
 
    void reset()
@@ -90,6 +97,11 @@ public:
    {
       m_fractal_zoom = fractal_zoom;
       m_bounds.zoom(fractal_zoom, m_x_res, m_y_res);
+   }
+
+   void set_fractal_offset(offset_action fractal_offset)
+   {
+      m_bounds.offset(fractal_offset);
    }
 
 protected:

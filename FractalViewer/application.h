@@ -17,7 +17,6 @@ private:
    std::string m_app_name;
    sf::VideoMode m_resolution;
    sf::RenderWindow m_window;
-   sf::Image m_fractal_image;
    sf::Texture m_fractal_texture;
    sf::Sprite m_sprite;
 

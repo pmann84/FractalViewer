@@ -14,6 +14,6 @@
     <ClInclude Include="fractal_renderer.h" />
     <ClInclude Include="fractal_generator_factory.h" />
     <ClInclude Include="julia_generator.h" />
-    <ClInclude Include="zoom_action.h" />
+    <ClInclude Include="input_actions.h" />
   </ItemGroup>
 </Project>

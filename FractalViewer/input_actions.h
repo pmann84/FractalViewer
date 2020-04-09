@@ -6,3 +6,9 @@ struct zoom_action
    int x; // x pixel of zoom centre
    int y; // y pixel of zoom centre
 };
+
+struct offset_action
+{
+   int x;
+   int y;
+};

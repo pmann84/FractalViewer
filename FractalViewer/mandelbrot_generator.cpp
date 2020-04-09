@@ -1,11 +1,11 @@
 #include "mandelbrot_generator.h"
 #include <iostream>
 
-mandelbrot_generator::mandelbrot_generator(sf::VideoMode window_res)
+mandelbrot_generator::mandelbrot_generator(unsigned int res_x, unsigned int res_y)
    : fractal_generator(std::complex<double>(-3.0, -1.5),
                        std::complex<double>(1.5, 1.5),
-                       window_res.width,
-                       window_res.height)
+                       res_x,
+                       res_y)
 {
 }
 

@@ -1,10 +1,10 @@
 #include "julia_generator.h"
 
-julia_generator::julia_generator(sf::VideoMode window_res, std::complex<double> c)
+julia_generator::julia_generator(unsigned int res_x, unsigned int res_y, std::complex<double> c)
    : fractal_generator(std::complex<double>(-2.0, -1.5),
       std::complex<double>(2.0, 1.5),
-      window_res.width,
-      window_res.height)
+      res_x,
+      res_y)
    , m_c(c)
 {
 }
