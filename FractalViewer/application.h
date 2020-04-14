@@ -33,5 +33,9 @@ private:
 
    fractal_renderer m_renderer;
 
-   //void set_pixel(unsigned int x, unsigned y, std::array<unsigned int, 4> colour);
+   void zoom_in();
+   void zoom_out();
+
+   void increase_fractal_res();
+   void decrease_fractal_res();
 };

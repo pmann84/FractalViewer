@@ -9,6 +9,7 @@
 // TODO: Implement UI
 // TODO: Plug in all parameters to UI
 // TODO: Investigate more speedups
+// TODO: Colouring goes black when zoomed in and resolution increased too much
 
 int main()
 {

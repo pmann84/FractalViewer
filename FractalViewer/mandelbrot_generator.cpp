@@ -20,8 +20,8 @@ std::array<unsigned int, 4> mandelbrot_generator::get_pixel_color(unsigned int x
    std::complex<double> zn(0.0, 0.0);
    // check whether |z| < 4
    // condition for general polynomial for some R > 0 such that |c| < R^2 - R (Mandelbrot has R=2)
-   const double escape_r = 2.0;
-   while (zn.real() * zn.real() + zn.imag() * zn.imag() < escape_r && iteration < m_fractal_resolution)
+   const double escape_r = 4.0;
+   while (zn.real() * zn.real() + zn.imag() * zn.imag() <= escape_r && iteration < m_fractal_resolution)
    {
       // keep updating until condition reached or max iterations hit
       zn = zn * zn + c;
