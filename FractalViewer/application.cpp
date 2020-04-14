@@ -26,14 +26,51 @@ bool application::is_open() const
    return m_window.isOpen();
 }
 
-//void application::set_pixel(unsigned x, unsigned y, std::array<unsigned, 4> colour)
-//{
-//   m_fractal_image.setPixel(
-//      x, 
-//      y, 
-//      sf::Color(colour[0], colour[1], colour[2], colour[3])
-//   );
-//}
+void application::zoom_in()
+{
+   m_fractal_zoom /= m_fractal_zoom_factor;
+   const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
+   std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
+   m_renderer.set_fractal_zoom(zoom);
+   m_state_changed = true;
+}
+
+void application::zoom_out()
+{
+   m_fractal_zoom *= m_fractal_zoom_factor;
+   if (m_fractal_zoom >= m_fractal_zoom_min)
+   {
+      m_fractal_zoom = m_fractal_zoom_min;
+   }
+   const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
+   std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
+   m_renderer.set_fractal_zoom(zoom);
+   m_state_changed = true;
+}
+
+void application::increase_fractal_res()
+{
+   m_fractal_resolution += m_fractal_res_delta;
+   if (m_fractal_resolution >= m_fractal_res_max)
+   {
+      m_fractal_resolution = m_fractal_res_max;
+   }
+   std::cout << "Increasing fractal resolution to " << m_fractal_resolution << std::endl;
+   m_renderer.set_fractal_resolution(m_fractal_resolution);
+   m_state_changed = true;
+}
+
+void application::decrease_fractal_res()
+{
+   m_fractal_resolution -= m_fractal_res_delta;
+   if (m_fractal_resolution <= m_fractal_res_min)
+   {
+      m_fractal_resolution = m_fractal_res_min;
+   }
+   std::cout << "Decreasing fractal resolution to " << m_fractal_resolution << std::endl;
+   m_renderer.set_fractal_resolution(m_fractal_resolution);
+   m_state_changed = true;
+}
 
 void application::handle_events()
 {
@@ -49,48 +86,22 @@ void application::handle_events()
             {
                case sf::Keyboard::Q:
                {
-                  m_fractal_resolution -= m_fractal_res_delta;
-                  if (m_fractal_resolution <= m_fractal_res_min)
-                  {
-                     m_fractal_resolution = m_fractal_res_min;
-                  }
-                  std::cout << "Decreasing fractal resolution to " << m_fractal_resolution << std::endl;
-                  m_renderer.set_fractal_resolution(m_fractal_resolution);
-                  m_state_changed = true;
+                  decrease_fractal_res();
                   break;
                }
                case sf::Keyboard::E:
                {
-                  m_fractal_resolution += m_fractal_res_delta;
-                  if (m_fractal_resolution >= m_fractal_res_max)
-                  {
-                     m_fractal_resolution = m_fractal_res_max;
-                  }
-                  std::cout << "Increasing fractal resolution to " << m_fractal_resolution << std::endl;
-                  m_renderer.set_fractal_resolution(m_fractal_resolution);
-                  m_state_changed = true;
+                  increase_fractal_res();
                   break;
                }
                case sf::Keyboard::LBracket:
                {
-                  m_fractal_zoom *= m_fractal_zoom_factor;
-                  if (m_fractal_zoom >= m_fractal_zoom_min)
-                  {
-                     m_fractal_zoom = m_fractal_zoom_min;
-                  }
-                  const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
-                  std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
-                  m_renderer.set_fractal_zoom(zoom);
-                  m_state_changed = true;
+                  zoom_out();
                   break;
                }
                case sf::Keyboard::RBracket:
                {
-                  m_fractal_zoom /= m_fractal_zoom_factor;
-                  const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
-                  std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
-                  m_renderer.set_fractal_zoom(zoom);
-                  m_state_changed = true;
+                  zoom_in();
                   break;
                }
                case sf::Keyboard::Left:
@@ -127,25 +138,13 @@ void application::handle_events()
          }
          case sf::Event::MouseWheelMoved:
          {
-            if (event.mouseWheel.delta == -1)
+            if (event.mouseWheel.delta == 1)
             {
-               m_fractal_zoom /= m_fractal_zoom_factor;
-               if (m_fractal_zoom <= m_fractal_zoom_min)
-               {
-                  m_fractal_zoom = m_fractal_zoom_min;
-               }
-               const zoom_action zoom{ m_fractal_zoom, event.mouseWheel.x, event.mouseWheel.y };
-               std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << event.mouseWheel.x << "," << event.mouseWheel.y << ")" << std::endl;
-               m_renderer.set_fractal_zoom(zoom);
-               m_state_changed = true;
+               zoom_in();
             }
             else
             {
-               m_fractal_zoom *= m_fractal_zoom_factor;
-               const zoom_action zoom{ m_fractal_zoom, event.mouseWheel.x, event.mouseWheel.y };
-               std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << event.mouseWheel.x << "," << event.mouseWheel.y << ")" << std::endl;
-               m_renderer.set_fractal_zoom(zoom);
-               m_state_changed = true;
+               zoom_out();
             }
             break;
          }
