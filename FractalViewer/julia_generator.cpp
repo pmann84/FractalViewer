@@ -25,5 +25,5 @@ std::array<unsigned int, 4> julia_generator::get_pixel_color(unsigned int x, uns
       ++iteration;
    }
    // Assign colour based on iteration value
-   return generator_utils::get_colour_for_iteration_count(iteration, m_fractal_resolution);
+   return generator_utils::escape_time_colour(iteration);
 }

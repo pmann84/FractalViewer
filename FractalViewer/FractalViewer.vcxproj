@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
+    <ClInclude Include="complex_bounds.h" />
     <ClInclude Include="fractal_generator.h" />
     <ClInclude Include="fractal_renderer.h" />
     <ClInclude Include="fractal_generator_factory.h" />

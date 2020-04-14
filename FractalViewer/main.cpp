@@ -5,6 +5,7 @@
 // TODO: Fix zoom out! Doesn't quite work properly
 // TODO: Logging
 // TODO: Implement different colouring strategies
+// TODO: Histogram colouring
 // TODO: Get imgui working
 // TODO: Implement UI
 // TODO: Plug in all parameters to UI

@@ -1,71 +1,59 @@
 #pragma once
 #include <array>
-#include <complex>
 
-#include "input_actions.h"
+#include "complex_bounds.h"
 
-class complex_bounds
+struct colour_palette
 {
-public:
-   complex_bounds(std::complex<double> min, std::complex<double> max)
-      : m_min(min), m_max(max), m_original_min(min), m_original_max(max)
+   colour_palette()
    {
+      m_palette[0] = { 0xf7, 0xfb, 0xff, 0xff };
+      m_palette[1] = { 0xde, 0xeb, 0xf7, 0xff };
+      m_palette[2] = { 0xc6, 0xdb, 0xef, 0xff };
+      m_palette[3] = { 0x9e, 0xca, 0xe1, 0xff };
+      m_palette[4] = { 0x6b, 0xae, 0xd6, 0xff };
+      m_palette[5] = { 0x42, 0x92, 0xc6, 0xff };
+      m_palette[6] = { 0x21, 0x71, 0xb5, 0xff };
+      m_palette[7] = { 0x08, 0x45, 0x94, 0xff };
    }
 
-   std::complex<double> centre() const
+   std::array<unsigned int, 4> get_colour(unsigned int idx)
    {
-      return m_min + (m_max - m_min) / 2.0;
+      return m_palette[idx % 8];
    }
 
-   std::complex<double> complex_from_pixel(unsigned int x_pixel, unsigned int x_res, unsigned int y_pixel, unsigned int y_res) const
-   {
-      // We do this outside of complex numbers because its about 50ms quicker!
-      double r = m_min.real() + x_pixel * (m_max.real() - m_min.real()) / static_cast<double>(x_res);
-      double i = m_max.imag() - y_pixel * (m_max.imag() - m_min.imag()) / static_cast<double>(y_res);;
-      return { r, i };
-   }
-
-   void zoom(zoom_action z, unsigned int x_res, unsigned int y_res)
-   {
-      const std::complex<double> new_limits = z.factor * (m_max - m_min);
-      const std::complex<double> new_centre = complex_from_pixel(z.x, x_res, z.y, y_res);
-      m_min = new_centre - new_limits / 2.0;
-      m_max = new_centre + new_limits / 2.0;
-   }
-
-   void offset(offset_action offset)
-   {
-      std::complex<double> delta = 0.1*(m_max - m_min);
-      std::complex<double> off{ offset.x * delta.real(), offset.y * delta.imag() };
-      m_min += off;
-      m_max += off;
-   }
-
-   void reset()
-   {
-      m_min = m_original_min;
-      m_max = m_original_max;
-   }
 private:
-   std::complex<double> m_min;
-   std::complex<double> m_max;
-
-   std::complex<double> m_original_min;
-   std::complex<double> m_original_max;
-
+   std::array<std::array<unsigned int, 4>, 8> m_palette{};
 };
 
 namespace generator_utils
 {
-   inline std::array<unsigned int, 4> get_colour_for_iteration_count(const unsigned int iteration, const unsigned int max_iterations)
+   inline std::array<unsigned int, 4> escape_time_colour(const unsigned int iteration_count)
    {
-      if (iteration == max_iterations)
-      {
-         return { 255, 255,255, 255 };
-      }
-      const auto colour_grad = static_cast<unsigned int>(iteration * (255 / max_iterations));
-      return { 0, 0, colour_grad, 255 };
+      colour_palette p;
+      return p.get_colour(iteration_count);
    }
+
+   //inline std::array<unsigned int, 4> get_colour_for_iteration_count(const unsigned int iteration, const unsigned int max_iterations)
+   //{
+   //   if (iteration == max_iterations)
+   //   {
+   //      return { 255, 255,255, 255 };
+   //   }
+   //   const auto colour_grad = static_cast<unsigned int>(iteration * (255 / max_iterations));
+   //   return { 0, 0, colour_grad, 255 };
+   //}
+
+   //inline double colour_transform(double grad, double c)
+   //{
+   //   return 0.5 + 0.5*cos(3.0 + grad * 0.075*2.0 + c);
+   //}
+
+   //inline std::array<unsigned int, 4> get_colour_for_iteration_count(const unsigned int iteration, const double z_abs, const double escape_r)
+   //{
+   //   const double log_grad = static_cast<double>(iteration) - log(log(z_abs) / (log(escape_r))) / log(2.0);
+   //   return { static_cast<unsigned int>(colour_transform(log_grad, 0.0) * 255.0), static_cast<unsigned int>(colour_transform(log_grad, 0.6) * 255.0), static_cast<unsigned int>(colour_transform(log_grad, 1.0) * 255.0), 255 };
+   //}
 }
 
 class fractal_generator
