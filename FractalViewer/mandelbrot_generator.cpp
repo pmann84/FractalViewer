@@ -28,6 +28,5 @@ std::array<unsigned int, 4> mandelbrot_generator::get_pixel_color(unsigned int x
       ++iteration;
    }
    // Assign colour based on iteration value
-   //return generator_utils::get_colour_for_iteration_count(iteration, m_fractal_resolution);
-   return generator_utils::escape_time_colour(iteration);
+   return generator_utils::escape_time_colour_wrapped(iteration);
 }

@@ -24,7 +24,9 @@ public:
    void render();
    void render_range(pixel_range x_range, pixel_range y_range);
    const pixel_buffer_t& data() const;
+   unsigned int core_count() const { return m_num_cores; }
 
+   void set_fractal_generator(std::unique_ptr<fractal_generator> generator);
    void set_fractal_resolution(int resolution) const;
    void set_fractal_zoom(zoom_action zoom) const;
    void set_fractal_offset(offset_action offset) const;

@@ -4,26 +4,81 @@
 #include <windows.h>
 #include "fractal_generator_factory.h"
 #include "input_actions.h"
+#include <imgui-SFML.h>
+#include <imgui.h>
 
 application::application(std::string app_name)
    : m_app_name(app_name)
    , m_resolution(sf::VideoMode::getDesktopMode())
    , m_window(m_resolution, m_app_name, sf::Style::Fullscreen)
+   , m_render_time_ms(0)
    , m_state_changed(true)
    , m_renderer(m_resolution.width, m_resolution.height, fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height), m_fractal_resolution)
-   //, m_renderer(m_resolution, fractal_generator_factory::create_julia_generator(m_resolution, { -0.8, 0.156 }), m_fractal_resolution)
 {
-   m_renderer.set_fractal_zoom({ 1.0, static_cast<int>(m_resolution.width) / 2, static_cast<int>(m_resolution.height) / 2 });
+   m_renderer.set_fractal_zoom({
+      1.0, static_cast<int>(m_resolution.width) / 2, static_cast<int>(m_resolution.height) / 2
+   });
    m_window.setFramerateLimit(0); // May not need this eventually
+   // Init ImGui
+   ImGui::SFML::Init(m_window);
    // No SFML call for this so need to resort to windows specific code
    ::ShowWindow(m_window.getSystemHandle(), SW_MAXIMIZE);
    m_fractal_texture.create(m_resolution.width, m_resolution.height);
    m_fractal_texture.setSmooth(true);
 }
 
+application::~application()
+{
+   ImGui::SFML::Shutdown();
+}
+
 bool application::is_open() const
 {
    return m_window.isOpen();
+}
+
+void application::update_gui()
+{
+   ImGui::SFML::Update(m_window, m_gui_clock.restart());
+   ImGui::Begin("Render Controls"); // begin window
+   // Render time
+   std::stringstream ss;
+   ss << std::to_string(m_render_time_ms) << "ms";
+   ImGui::LabelText(ss.str().c_str(), "Render Time");
+   /////////////////
+   /// Core count
+   std::stringstream core_ss;
+   core_ss << std::to_string(m_renderer.core_count());
+   ImGui::LabelText(core_ss.str().c_str(), "Core Count");
+   /////////////////
+   /// Fractal picker
+   static int current_item = 0;
+   ImGui::LabelText("", "Fractal Generator");
+   ImGui::SameLine();
+   const char* generator_items[] = { "Mandelbrot", "Julia" };
+   ImGui::Combo("", &m_fractal_generator_index, generator_items, IM_ARRAYSIZE(generator_items));
+   /////////////////
+   ImGui::End();
+}
+
+bool application::check_if_generator_changed() const
+{
+   return m_fractal_generator_index != m_last_fractal_generator_index;
+}
+
+void application::update_generator()
+{
+   switch (m_fractal_generator_index)
+   {
+   case 0:
+      m_renderer.set_fractal_generator(fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height));
+      break;
+   case 1:
+      m_renderer.set_fractal_generator(fractal_generator_factory::create_julia_generator(m_resolution.width, m_resolution.height, { -0.8, 0.156 }));
+      break;
+   default:
+      break;
+   }
 }
 
 void application::zoom_in()
@@ -78,6 +133,7 @@ void application::handle_events()
    sf::Event event;
    while (m_window.pollEvent(event))
    {
+      ImGui::SFML::ProcessEvent(event);
       switch (event.type)
       {
          case sf::Event::KeyPressed:
@@ -156,6 +212,14 @@ void application::handle_events()
          default: break;
       }
    }
+
+   // Check here for generator changes
+   if (check_if_generator_changed())
+   {
+      update_generator();
+      m_last_fractal_generator_index = m_fractal_generator_index;
+      m_state_changed = true;
+   }
 }
 
 void application::update()
@@ -167,15 +231,22 @@ void application::update()
       m_renderer.render();
       m_fractal_texture.update(&(m_renderer.data().front()));
       const sf::Time render_time = render_timer.getElapsedTime();
-      std::cout << "Fractal Render (" << m_resolution.width * m_resolution.height << " pxs) completed in " << render_time.asMilliseconds() << "ms." << std::endl;
+      m_render_time_ms = render_time.asMilliseconds();
+      //std::cout << "Fractal Render (" << m_resolution.width * m_resolution.height << " pxs) completed in " << m_render_time_ms << "ms." << std::endl;
 
       m_state_changed = false;
    }
+
+   // Always update ImGui
+   // Do this after so we get render stats from the run
+   update_gui();
 }
 
 void application::display()
 {
+   m_window.clear(sf::Color::Black); // fill background with color
    m_sprite.setTexture(m_fractal_texture);
    m_window.draw(m_sprite);
+   ImGui::SFML::Render(m_window);
    m_window.display();
 }

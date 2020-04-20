@@ -2,36 +2,28 @@
 #include <array>
 
 #include "complex_bounds.h"
+#include "colour_palette_generator.h"
 
-struct colour_palette
-{
-   colour_palette()
-   {
-      m_palette[0] = { 0xf7, 0xfb, 0xff, 0xff };
-      m_palette[1] = { 0xde, 0xeb, 0xf7, 0xff };
-      m_palette[2] = { 0xc6, 0xdb, 0xef, 0xff };
-      m_palette[3] = { 0x9e, 0xca, 0xe1, 0xff };
-      m_palette[4] = { 0x6b, 0xae, 0xd6, 0xff };
-      m_palette[5] = { 0x42, 0x92, 0xc6, 0xff };
-      m_palette[6] = { 0x21, 0x71, 0xb5, 0xff };
-      m_palette[7] = { 0x08, 0x45, 0x94, 0xff };
-   }
-
-   std::array<unsigned int, 4> get_colour(unsigned int idx)
-   {
-      return m_palette[idx % 8];
-   }
-
-private:
-   std::array<std::array<unsigned int, 4>, 8> m_palette{};
-};
 
 namespace generator_utils
 {
-   inline std::array<unsigned int, 4> escape_time_colour(const unsigned int iteration_count)
+   inline std::array<unsigned int, 4> escape_time_colour_wrapped(const unsigned int iteration_count)
    {
-      colour_palette p;
+      colour_palette p = palette::create::blue();
       return p.get_colour(iteration_count);
+   }
+
+   inline std::array<unsigned int, 4> escape_time_colour(const unsigned int iteration_count, const unsigned int max_iterations)
+   {
+      colour_palette p = palette::create::blue();
+      return p.get_colour(iteration_count, max_iterations);
+   }
+
+   inline std::array<unsigned int, 4> continuous_potential(const unsigned iteration_count, double z_abs)
+   {
+      colour_palette p = palette::create::blue();
+      float d = log(z_abs) / std::pow(2.0, iteration_count);
+      return p.get_colour(d);
    }
 
    //inline std::array<unsigned int, 4> get_colour_for_iteration_count(const unsigned int iteration, const unsigned int max_iterations)

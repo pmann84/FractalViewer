@@ -73,6 +73,11 @@ const std::vector<uint8_t>& fractal_renderer::data() const
    return m_fractal_data;
 }
 
+void fractal_renderer::set_fractal_generator(std::unique_ptr<fractal_generator> generator)
+{
+   m_fractal_generator = std::move(generator);
+}
+
 void fractal_renderer::set_fractal_resolution(int resolution) const
 {
    m_fractal_generator->set_fractal_resolution(resolution);
