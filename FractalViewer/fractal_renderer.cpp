@@ -45,6 +45,7 @@ void fractal_renderer::render_range(pixel_range x_range, pixel_range y_range)
    {
       for (uint32_t i = x_range.begin; i < x_range.end; ++i)
       {
+         // TODO: Try stuffing a uint32_t into here!
          const std::array<uint8_t, 4> pixel_colour = m_fractal_generator->get_pixel_color(i, j);
          const uint64_t current_idx = (j * m_res_x + i) * 4;
          m_fractal_data[current_idx + 0] = pixel_colour[0]; // R
