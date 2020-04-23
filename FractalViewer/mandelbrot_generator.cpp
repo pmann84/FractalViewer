@@ -11,7 +11,7 @@ mandelbrot_generator::mandelbrot_generator(uint32_t res_x, uint32_t res_y, colou
 {
 }
 
-std::array<uint8_t, 4> mandelbrot_generator::get_pixel_color(uint8_t x, uint8_t y)
+std::array<uint8_t, 4> mandelbrot_generator::get_pixel_color(uint32_t x, uint32_t y)
 {
    const std::complex<double> c = complex_from_pixel(x, y);
 

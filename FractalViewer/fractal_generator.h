@@ -7,12 +7,12 @@
 #include <functional>
 #include <utility>
 
-using colour_gen_func_t = std::function<std::array<uint8_t, 4>(const uint8_t, const uint8_t, double)>;
+using colour_gen_func_t = std::function<std::array<uint8_t, 4>(const uint32_t, const uint32_t, double)>;
 
 namespace generator_utils
 {
    // TODO: Make these just return a single uint32_t to put into the buffer (might not be possible)
-   inline std::array<uint8_t, 4> escape_time_colour(const uint8_t iteration_count, const uint8_t max_iterations, double)
+   inline std::array<uint8_t, 4> escape_time_colour(const uint32_t iteration_count, const uint32_t max_iterations, double)
    {
       //const float p = static_cast<float>(iteration_count);
       const float p = static_cast<float>(iteration_count) * 256.0f / static_cast<float>(max_iterations);
@@ -25,7 +25,7 @@ namespace generator_utils
       };
    }
 
-   inline std::array<uint8_t, 4> continuous_potential(const uint8_t iteration_count, const uint8_t max_iterations, double z_abs)
+   inline std::array<uint8_t, 4> continuous_potential(const uint32_t iteration_count, const uint32_t max_iterations, double z_abs)
    {
       const float iter_p = static_cast<float>(iteration_count) + 1.0f - logf(logf(z_abs) / (logf(2.0f))) / logf(2.0f);
       const float p =  iter_p * 256.0f / static_cast<float>(max_iterations);
@@ -53,7 +53,7 @@ public:
    }
    virtual ~fractal_generator() = default;
 
-   virtual std::array<uint8_t, 4> get_pixel_color(uint8_t x, uint8_t y) = 0;
+   virtual std::array<uint8_t, 4> get_pixel_color(uint32_t x, uint32_t y) = 0;
 
    std::complex<double> complex_from_pixel(uint32_t x_pixel, uint32_t y_pixel) const
    {

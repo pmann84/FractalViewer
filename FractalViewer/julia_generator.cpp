@@ -12,7 +12,7 @@ julia_generator::julia_generator(uint32_t res_x, uint32_t res_y, colour_gen_func
 {
 }
 
-std::array<uint8_t, 4> julia_generator::get_pixel_color(uint8_t x, uint8_t y)
+std::array<uint8_t, 4> julia_generator::get_pixel_color(uint32_t x, uint32_t y)
 {
    std::complex<double> zn = complex_from_pixel(x, y);
    // Initialise iteration count to 0

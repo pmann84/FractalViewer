@@ -13,7 +13,7 @@ struct pixel_range
 class fractal_renderer
 {
 public:
-   using pixel_buffer_t = std::vector<unsigned char>;
+   using pixel_buffer_t = std::vector<uint8_t>;
 
    fractal_renderer(
       uint32_t res_x,
@@ -22,7 +22,7 @@ public:
 
    void render();
    void render_range(pixel_range x_range, pixel_range y_range);
-   const pixel_buffer_t& data() const;
+   const pixel_buffer_t& data() const { return m_fractal_data; }
    uint32_t core_count() const { return m_num_cores; }
 
    void set_fractal_generator(std::unique_ptr<fractal_generator> generator);
