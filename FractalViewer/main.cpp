@@ -7,13 +7,9 @@
 // TODO: Fix resolution changes after zooming
 // TODO: Fix zooming with mouse, doesnt work properly
 // TODO: Fix zoom out! Doesn't quite work properly
-// TODO: Logging
-// TODO: Implement different colouring strategies
 // TODO: Histogram colouring - single colour range over all histogram
-// TODO: Histogram with multiple colour ranges over the histogramW
-// TODO: Get imgui working
-// TODO: Implement UI
-// TODO: Plug in all parameters to UI
+// TODO: Histogram with multiple colour ranges over the histogram
+// TODO: Work out how to plug in arbitrary fractal parameters to the ui e.g. julia parameter
 // TODO: Investigate more speedups
 // TODO: Colouring goes black when zoomed in and resolution increased too much
 

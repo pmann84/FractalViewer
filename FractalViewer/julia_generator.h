@@ -1,15 +1,14 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include "fractal_generator.h"
 #include <complex>
 
 class julia_generator : public fractal_generator
 {
 public:
-   julia_generator(unsigned int res_x, unsigned int res_y, std::complex<double> c);
+   julia_generator(uint32_t res_x, uint32_t res_y, colour_gen_func_t func, std::complex<double> c);
 
-   std::array<unsigned int, 4> get_pixel_color(unsigned int x, unsigned int y) override;
+   std::array<uint8_t, 4> get_pixel_color(uint8_t x, uint8_t y) override;
 
 private:
    std::complex<double> m_c;

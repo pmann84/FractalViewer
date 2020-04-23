@@ -1,21 +1,22 @@
 #include "mandelbrot_generator.h"
-#include <iostream>
 
-mandelbrot_generator::mandelbrot_generator(unsigned int res_x, unsigned int res_y)
+#include <utility>
+
+mandelbrot_generator::mandelbrot_generator(uint32_t res_x, uint32_t res_y, colour_gen_func_t func)
    : fractal_generator(std::complex<double>(-3.0, -1.5),
                        std::complex<double>(1.5, 1.5),
                        res_x,
-                       res_y)
+                       res_y,
+                       std::move(func))
 {
 }
 
-std::array<unsigned int, 4> mandelbrot_generator::get_pixel_color(unsigned int x, unsigned int y)
+std::array<uint8_t, 4> mandelbrot_generator::get_pixel_color(uint8_t x, uint8_t y)
 {
    const std::complex<double> c = complex_from_pixel(x, y);
 
-   //std::cout << "Complex coord: " << c << " at pixel (" << x << "," << y << ")" << std::endl;
    // Initialise iteration count to 0
-   int iteration = 0;
+   int32_t iteration = 0;
    // Initialise z to 0
    std::complex<double> zn(0.0, 0.0);
    // check whether |z| < 4
@@ -28,5 +29,6 @@ std::array<unsigned int, 4> mandelbrot_generator::get_pixel_color(unsigned int x
       ++iteration;
    }
    // Assign colour based on iteration value
-   return generator_utils::escape_time_colour_wrapped(iteration);
+   const double z_abs = sqrt(zn.real() * zn.real() + zn.imag() * zn.imag());
+   return m_colour_gen_func(iteration, m_fractal_resolution, z_abs);
 }

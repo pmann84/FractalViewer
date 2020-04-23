@@ -22,16 +22,19 @@ private:
    sf::Sprite m_sprite;
    sf::Clock m_gui_clock;
 
-   unsigned int m_render_time_ms;
+   uint64_t m_render_time_ms;
 
    bool m_state_changed;
-   int m_fractal_generator_index = 0;
-   int m_last_fractal_generator_index = m_fractal_generator_index;
+   int32_t m_fractal_generator_index = 0;
+   int32_t m_last_fractal_generator_index = m_fractal_generator_index;
 
-   int m_fractal_resolution = 30;
-   int m_fractal_res_delta = 4;
-   int m_fractal_res_min = 1;
-   int m_fractal_res_max = 1000;
+   int32_t m_fractal_colouring_index = 0;
+   int32_t m_last_fractal_colouring_index = m_fractal_colouring_index;
+
+   uint32_t m_fractal_resolution = 30;
+   uint32_t m_fractal_res_delta = 4;
+   uint32_t m_fractal_res_min = 1;
+   uint32_t m_fractal_res_max = 1000;
 
    double m_fractal_zoom = 1.0;
    double m_fractal_zoom_factor = 1.3;
@@ -42,6 +45,9 @@ private:
    void update_gui();
    bool check_if_generator_changed() const;
    void update_generator();
+   bool check_if_colour_algorithm_changed() const;
+   void update_colour_algorithm();
+   colour_gen_func_t get_selected_colour_algorithm() const;
 
    void zoom_in();
    void zoom_out();

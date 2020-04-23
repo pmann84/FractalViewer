@@ -3,12 +3,12 @@
 #include <thread>
 #include <future>
 #include <iostream>
+#include <utility>
 
 fractal_renderer::fractal_renderer(
-   unsigned int res_x,
-   unsigned int res_y,
-   std::unique_ptr<fractal_generator> generator,
-   int fractal_resolution)
+   uint32_t res_x,
+   uint32_t res_y,
+   std::unique_ptr<fractal_generator> generator)
       : m_res_x(res_x)
       , m_res_y(res_y)
       , m_fractal_generator(std::move(generator))
@@ -23,10 +23,10 @@ void fractal_renderer::render()
 {
    // Because the buffer (and texture) accepts the buffer in columns i.e. col1, col2, ....
    // We split the domain by the vertical resolution, so its easy to combine them all
-   const unsigned int y_pixel_interval = m_res_y / m_num_cores;
+   const uint32_t y_pixel_interval = m_res_y / m_num_cores;
    const pixel_range x_range = { 0, m_res_x };
    std::vector<std::future<void>> tasks;
-   for (unsigned int i = 0; i < m_num_cores; ++i)
+   for (uint32_t i = 0; i < m_num_cores; ++i)
    {
       pixel_range y_range = { i * y_pixel_interval, (i + 1) * y_pixel_interval };
       if (y_range.end > m_res_y) y_range.end = m_res_y;
@@ -37,29 +37,17 @@ void fractal_renderer::render()
    {
       task.get();
    }
-   //
-   //for (unsigned int i = 0; i < m_res_x; ++i)
-   //{
-   //   for (unsigned int j = 0; j < m_res_y; ++j)
-   //   {
-   //      const std::array<unsigned int, 4> pixel_colour = m_fractal_generator->get_pixel_color(i, j);
-   //      const unsigned int current_idx = (j * m_res_x + i) * 4;
-   //      m_fractal_data[current_idx + 0] = pixel_colour[0]; // R
-   //      m_fractal_data[current_idx + 1] = pixel_colour[1]; // G
-   //      m_fractal_data[current_idx + 2] = pixel_colour[2]; // B
-   //      m_fractal_data[current_idx + 3] = pixel_colour[3]; // A
-   //   }
-   //}
 }
 
 void fractal_renderer::render_range(pixel_range x_range, pixel_range y_range)
 {
-   for (unsigned int i = x_range.begin; i < x_range.end; ++i)
+   for (uint32_t i = x_range.begin; i < x_range.end; ++i)
    {
-      for (unsigned int j = y_range.begin; j < y_range.end; ++j)
+      for (uint32_t j = y_range.begin; j < y_range.end; ++j)
       {
-         const std::array<unsigned int, 4> pixel_colour = m_fractal_generator->get_pixel_color(i, j);
-         const unsigned int current_idx = (j * m_res_x + i) * 4;
+         // TODO: Make the m_fractal_data contain uint32_t's instead! Check if the texture takes data in this form!
+         const std::array<uint8_t, 4> pixel_colour = m_fractal_generator->get_pixel_color(i, j);
+         const uint32_t current_idx = (j * m_res_x + i) * 4;
          m_fractal_data[current_idx + 0] = pixel_colour[0]; // R
          m_fractal_data[current_idx + 1] = pixel_colour[1]; // G
          m_fractal_data[current_idx + 2] = pixel_colour[2]; // B
@@ -78,7 +66,12 @@ void fractal_renderer::set_fractal_generator(std::unique_ptr<fractal_generator> 
    m_fractal_generator = std::move(generator);
 }
 
-void fractal_renderer::set_fractal_resolution(int resolution) const
+void fractal_renderer::set_fractal_colour_algorithm(colour_gen_func_t func)
+{
+   m_fractal_generator->set_fractal_colouring_algorithm(std::move(func));
+}
+
+void fractal_renderer::set_fractal_resolution(int32_t resolution) const
 {
    m_fractal_generator->set_fractal_resolution(resolution);
 }

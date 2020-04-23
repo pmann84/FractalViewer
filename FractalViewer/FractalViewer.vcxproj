@@ -94,8 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
+    <ClInclude Include="colour.h" />
     <ClInclude Include="colour_palette.h" />
-    <ClInclude Include="colour_palette_generator.h" />
     <ClInclude Include="complex_bounds.h" />
     <ClInclude Include="fractal_generator.h" />
     <ClInclude Include="fractal_renderer.h" />

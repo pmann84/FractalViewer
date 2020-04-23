@@ -32,7 +32,7 @@
     <ClInclude Include="input_actions.h" />
     <ClInclude Include="complex_bounds.h" />
     <ClInclude Include="colour_palette.h" />
-    <ClInclude Include="colour_palette_generator.h" />
+    <ClInclude Include="colour.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="vendor">

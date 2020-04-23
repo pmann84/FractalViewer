@@ -10,20 +10,23 @@ public:
    {
    }
 
+   std::complex<double> min() const { return m_min; }
+   std::complex<double> max() const { return m_max; }
+
    std::complex<double> centre() const
    {
       return m_min + (m_max - m_min) / 2.0;
    }
 
-   std::complex<double> complex_from_pixel(unsigned int x_pixel, unsigned int x_res, unsigned int y_pixel, unsigned int y_res) const
+   std::complex<double> complex_from_pixel(uint32_t x_pixel, uint32_t x_res, uint32_t y_pixel, uint32_t y_res) const
    {
       // We do this outside of complex numbers because its about 50ms quicker!
-      double r = m_min.real() + x_pixel * (m_max.real() - m_min.real()) / static_cast<double>(x_res);
-      double i = m_max.imag() - y_pixel * (m_max.imag() - m_min.imag()) / static_cast<double>(y_res);;
+      const double r = m_min.real() + x_pixel * (m_max.real() - m_min.real()) / static_cast<double>(x_res);
+      const double i = m_max.imag() - y_pixel * (m_max.imag() - m_min.imag()) / static_cast<double>(y_res);;
       return { r, i };
    }
 
-   void zoom(zoom_action z, unsigned int x_res, unsigned int y_res)
+   void zoom(zoom_action z, uint32_t x_res, uint32_t y_res)
    {
       const std::complex<double> new_limits = z.factor * (m_max - m_min);
       const std::complex<double> new_centre = complex_from_pixel(z.x, x_res, z.y, y_res);

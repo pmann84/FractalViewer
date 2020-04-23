@@ -13,11 +13,14 @@ application::application(std::string app_name)
    , m_window(m_resolution, m_app_name, sf::Style::Fullscreen)
    , m_render_time_ms(0)
    , m_state_changed(true)
-   , m_renderer(m_resolution.width, m_resolution.height, fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height), m_fractal_resolution)
+   , m_renderer(m_resolution.width, m_resolution.height, fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_algorithm()))
 {
    m_renderer.set_fractal_zoom({
-      1.0, static_cast<int>(m_resolution.width) / 2, static_cast<int>(m_resolution.height) / 2
+      1.0,
+      static_cast<int32_t>(m_resolution.width) / 2,
+      static_cast<int32_t>(m_resolution.height) / 2
    });
+   m_renderer.set_fractal_resolution(m_fractal_resolution);
    m_window.setFramerateLimit(0); // May not need this eventually
    // Init ImGui
    ImGui::SFML::Init(m_window);
@@ -51,12 +54,37 @@ void application::update_gui()
    core_ss << std::to_string(m_renderer.core_count());
    ImGui::LabelText(core_ss.str().c_str(), "Core Count");
    /////////////////
+   /// Zoom
+   std::stringstream zoom_ss;
+   zoom_ss << std::to_string(1.0/m_fractal_zoom);
+   ImGui::LabelText(zoom_ss.str().c_str(), "Zoom Factor");
+   /////////////////
+   /// Resolution
+   std::stringstream res_ss;
+   res_ss << std::to_string(m_fractal_resolution);
+   ImGui::LabelText(res_ss.str().c_str(), "Fractal Resolution");
+   /////////////////
+   /// Fractal bounds
+   std::stringstream min_ss;
+   auto min = m_renderer.get_bounds().min();
+   min_ss << min.real() << " + " << min.imag() << "i";
+   ImGui::LabelText(min_ss.str().c_str(), "Bounds Min");
+   std::stringstream max_ss;
+   auto max = m_renderer.get_bounds().max();
+   max_ss << max.real() << " + " << max.imag() << "i";
+   ImGui::LabelText(max_ss.str().c_str(), "Bounds Max");
+   /////////////////
    /// Fractal picker
-   static int current_item = 0;
    ImGui::LabelText("", "Fractal Generator");
    ImGui::SameLine();
    const char* generator_items[] = { "Mandelbrot", "Julia" };
-   ImGui::Combo("", &m_fractal_generator_index, generator_items, IM_ARRAYSIZE(generator_items));
+   ImGui::Combo("fractal", &m_fractal_generator_index, generator_items, IM_ARRAYSIZE(generator_items));
+   /////////////////
+   /// Colour algo picker
+   ImGui::LabelText("", "Colouring Algorithm");
+   ImGui::SameLine();
+   const char* algo_items[] = { "Escape Time", "Continuous Potential" };
+   ImGui::Combo("colour_algo", &m_fractal_colouring_index, algo_items, IM_ARRAYSIZE(algo_items));
    /////////////////
    ImGui::End();
 }
@@ -71,11 +99,34 @@ void application::update_generator()
    switch (m_fractal_generator_index)
    {
    case 0:
-      m_renderer.set_fractal_generator(fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height));
+      m_renderer.set_fractal_generator(fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_algorithm()));
       break;
    case 1:
-      m_renderer.set_fractal_generator(fractal_generator_factory::create_julia_generator(m_resolution.width, m_resolution.height, { -0.8, 0.156 }));
+      m_renderer.set_fractal_generator(fractal_generator_factory::create_julia_generator(m_resolution.width, m_resolution.height, get_selected_colour_algorithm(), { -0.8, 0.156 }));
       break;
+   default:
+      break;
+   }
+}
+
+bool application::check_if_colour_algorithm_changed() const
+{
+   return m_fractal_colouring_index != m_last_fractal_colouring_index;
+}
+
+void application::update_colour_algorithm()
+{
+   m_renderer.set_fractal_colour_algorithm(get_selected_colour_algorithm());
+}
+
+colour_gen_func_t application::get_selected_colour_algorithm() const
+{
+   switch (m_fractal_colouring_index)
+   {
+   case 0:
+      return generator_utils::escape_time_colour;
+   case 1:
+      return generator_utils::continuous_potential;
    default:
       break;
    }
@@ -85,7 +136,7 @@ void application::zoom_in()
 {
    m_fractal_zoom /= m_fractal_zoom_factor;
    const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
-   std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
+   //std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
    m_renderer.set_fractal_zoom(zoom);
    m_state_changed = true;
 }
@@ -98,7 +149,7 @@ void application::zoom_out()
       m_fractal_zoom = m_fractal_zoom_min;
    }
    const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
-   std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
+   //std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
    m_renderer.set_fractal_zoom(zoom);
    m_state_changed = true;
 }
@@ -110,7 +161,7 @@ void application::increase_fractal_res()
    {
       m_fractal_resolution = m_fractal_res_max;
    }
-   std::cout << "Increasing fractal resolution to " << m_fractal_resolution << std::endl;
+   //std::cout << "Increasing fractal resolution to " << m_fractal_resolution << std::endl;
    m_renderer.set_fractal_resolution(m_fractal_resolution);
    m_state_changed = true;
 }
@@ -122,7 +173,7 @@ void application::decrease_fractal_res()
    {
       m_fractal_resolution = m_fractal_res_min;
    }
-   std::cout << "Decreasing fractal resolution to " << m_fractal_resolution << std::endl;
+   //std::cout << "Decreasing fractal resolution to " << m_fractal_resolution << std::endl;
    m_renderer.set_fractal_resolution(m_fractal_resolution);
    m_state_changed = true;
 }
@@ -220,6 +271,13 @@ void application::handle_events()
       m_last_fractal_generator_index = m_fractal_generator_index;
       m_state_changed = true;
    }
+
+   if (check_if_colour_algorithm_changed())
+   {
+      update_colour_algorithm();
+      m_last_fractal_colouring_index = m_fractal_colouring_index;
+      m_state_changed = true;
+   }
 }
 
 void application::update()
@@ -232,7 +290,6 @@ void application::update()
       m_fractal_texture.update(&(m_renderer.data().front()));
       const sf::Time render_time = render_timer.getElapsedTime();
       m_render_time_ms = render_time.asMilliseconds();
-      //std::cout << "Fractal Render (" << m_resolution.width * m_resolution.height << " pxs) completed in " << m_render_time_ms << "ms." << std::endl;
 
       m_state_changed = false;
    }
