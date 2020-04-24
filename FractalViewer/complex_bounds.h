@@ -47,6 +47,7 @@ public:
       m_min = m_original_min;
       m_max = m_original_max;
    }
+
 private:
    std::complex<double> m_min;
    std::complex<double> m_max;

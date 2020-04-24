@@ -86,6 +86,14 @@ void application::update_gui()
    const char* algo_items[] = { "Escape Time", "Continuous Potential" };
    ImGui::Combo("colour_algo", &m_fractal_colouring_index, algo_items, IM_ARRAYSIZE(algo_items));
    /////////////////
+   /// Reset Button
+   if(ImGui::Button("Reset Bounds", {100, 30}))
+   {
+      m_renderer.reset_bounds();
+      m_state_changed = true;
+   }
+
+   /////////////////
    ImGui::End();
 }
 
@@ -100,9 +108,11 @@ void application::update_generator()
    {
    case 0:
       m_renderer.set_fractal_generator(fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_algorithm()));
+      m_renderer.set_fractal_resolution(m_fractal_resolution);
       break;
    case 1:
       m_renderer.set_fractal_generator(fractal_generator_factory::create_julia_generator(m_resolution.width, m_resolution.height, get_selected_colour_algorithm(), { -0.8, 0.156 }));
+      m_renderer.set_fractal_resolution(m_fractal_resolution);
       break;
    default:
       break;

@@ -83,6 +83,10 @@ public:
       m_bounds.offset(fractal_offset);
    }
 
+   void reset_bounds()
+   {
+      m_bounds.reset();
+   }
 protected:
    int32_t m_fractal_resolution = 127;
    zoom_action m_fractal_zoom;

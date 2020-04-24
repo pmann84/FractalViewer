@@ -32,6 +32,7 @@ public:
    void set_fractal_offset(offset_action offset) const;
 
    complex_bounds get_bounds() const { return m_fractal_generator->get_bounds(); }
+   void reset_bounds() const { m_fractal_generator->reset_bounds(); }
 
 private:
    uint32_t m_res_x;
