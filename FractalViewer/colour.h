@@ -42,9 +42,14 @@ public:
       return a | (b << 8) | (g << 16) | (r << 24);
    }
 
-   std::array<float, 4> rgba() const
+   std::array<uint8_t, 4> rgba() const
    {
-      return m_channels;
+      return {
+         static_cast<uint8_t>(m_channels[0] * 255),
+         static_cast<uint8_t>(m_channels[1] * 255),
+         static_cast<uint8_t>(m_channels[2] * 255),
+         static_cast<uint8_t>(m_channels[3] * 255)
+      };
    }
 
    float r() const { return m_channels[0]; }

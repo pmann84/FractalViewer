@@ -95,6 +95,7 @@
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="colour.h" />
+    <ClInclude Include="colour_algorithms.h" />
     <ClInclude Include="colour_palette.h" />
     <ClInclude Include="complex_bounds.h" />
     <ClInclude Include="fractal_generator.h" />

@@ -61,9 +61,14 @@ void fractal_renderer::set_fractal_generator(std::unique_ptr<fractal_generator> 
    m_fractal_generator = std::move(generator);
 }
 
-void fractal_renderer::set_fractal_colour_algorithm(colour_gen_func_t func)
+void fractal_renderer::set_fractal_colour_algorithm(colouring::colour_algorithm_func_t func)
 {
    m_fractal_generator->set_fractal_colouring_algorithm(std::move(func));
+}
+
+void fractal_renderer::set_fractal_colour_palette(palette::colour_from_palette_func_t func)
+{
+   m_fractal_generator->set_fractal_colour_palette(std::move(func));
 }
 
 void fractal_renderer::set_fractal_resolution(int32_t resolution) const
@@ -71,12 +76,29 @@ void fractal_renderer::set_fractal_resolution(int32_t resolution) const
    m_fractal_generator->set_fractal_resolution(resolution);
 }
 
+int32_t fractal_renderer::fractal_resolution() const
+{
+   return m_fractal_generator->fractal_resolution();
+}
+
 void fractal_renderer::set_fractal_zoom(zoom_action zoom) const
 {
    m_fractal_generator->set_fractal_zoom(zoom);
 }
 
+zoom_action fractal_renderer::fractal_zoom() const
+{
+   return m_fractal_generator->fractal_zoom();
+}
+
 void fractal_renderer::set_fractal_offset(offset_action offset) const
 {
    m_fractal_generator->set_fractal_offset(offset);
+}
+
+void fractal_renderer::reset() const
+{
+   m_fractal_generator->reset_bounds();
+   m_fractal_generator->reset_resolution();
+   m_fractal_generator->reset_zoom();
 }

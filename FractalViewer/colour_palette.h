@@ -1,8 +1,13 @@
 #pragma once
+
 #include "colour.h"
+#include "colour_algorithms.h"
+
+#include <functional>
 
 namespace palette
 {
+   using colour_from_palette_func_t = std::function<colour(float)>;
    namespace
    {
       float get(float t, float amplitude, float frequency, float horizontal_offset, float vertical_offset)
@@ -24,11 +29,12 @@ namespace palette
    {
       static colour get(float t)
       {
+         const float num_colours = 256.0f;
          const colour amplitude = { 0.5f, 0.5f, 0.5f };
          const colour frequency = { 0.00390635f, 0.00390635f, 0.00390635f };
          const colour horizontal_off = { 0.644f, 1.76067f, 2.87733f };
          const colour vertical_off = { 0.5f, 0.5f, 0.5f };
-         return palette::get(t, amplitude, frequency, horizontal_off, vertical_off);
+         return palette::get(t * num_colours, amplitude, frequency, horizontal_off, vertical_off);
       }
    }
 
@@ -36,11 +42,12 @@ namespace palette
    {
       static colour get(float t)
       {
+         const float num_colours = 256.0f;
          const colour amplitude = { 0.5f, 0.5f, 0.5f };
          const colour frequency = { 0.00390635f, 0.00390635f, 0.00390635f };
          const colour horizontal_off = { 0.0f, 0.6666f, 1.333333f };
          const colour vertical_off = { 0.5f, 0.5f, 0.5f };
-         return palette::get(t, amplitude, frequency, horizontal_off, vertical_off);
+         return palette::get(t * num_colours, amplitude, frequency, horizontal_off, vertical_off);
       }
    }
 }

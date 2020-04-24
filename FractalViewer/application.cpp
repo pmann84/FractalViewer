@@ -13,7 +13,8 @@ application::application(std::string app_name)
    , m_window(m_resolution, m_app_name, sf::Style::Fullscreen)
    , m_render_time_ms(0)
    , m_state_changed(true)
-   , m_renderer(m_resolution.width, m_resolution.height, fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_algorithm()))
+   , m_julia_c{ -0.8, 0.156 }
+   , m_renderer(m_resolution.width, m_resolution.height, fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_palette(), get_selected_colour_algorithm()))
 {
    m_renderer.set_fractal_zoom({
       1.0,
@@ -74,25 +75,43 @@ void application::update_gui()
    max_ss << max.real() << " + " << max.imag() << "i";
    ImGui::LabelText(max_ss.str().c_str(), "Bounds Max");
    /////////////////
-   /// Fractal picker
-   ImGui::LabelText("", "Fractal Generator");
-   ImGui::SameLine();
-   const char* generator_items[] = { "Mandelbrot", "Julia" };
-   ImGui::Combo("fractal", &m_fractal_generator_index, generator_items, IM_ARRAYSIZE(generator_items));
-   /////////////////
    /// Colour algo picker
    ImGui::LabelText("", "Colouring Algorithm");
    ImGui::SameLine();
    const char* algo_items[] = { "Escape Time", "Continuous Potential" };
    ImGui::Combo("colour_algo", &m_fractal_colouring_index, algo_items, IM_ARRAYSIZE(algo_items));
    /////////////////
+   /// Colour palette picker
+   ImGui::LabelText("", "Colour Palette");
+   ImGui::SameLine();
+   const char* palette_items[] = { "Default", "Rainbow" };
+   ImGui::Combo("palette", &m_colour_palette_index, palette_items, IM_ARRAYSIZE(palette_items));
+   /////////////////
+   /// Fractal picker
+   ImGui::LabelText("", "Fractal Generator");
+   ImGui::SameLine();
+   const char* generator_items[] = { "Mandelbrot", "Julia" };
+   ImGui::Combo("fractal", &m_fractal_generator_index, generator_items, IM_ARRAYSIZE(generator_items));
+   /////////////////
+   /// Fractal paramaters
+   switch (m_fractal_generator_index)
+   {
+   case 0:
+      break; // Mandelbrot - no params
+   case 1:
+      ImGui::DragFloat2("C", m_julia_c, 0.001f, -10.0f, 10.0f);
+      break; // Julia
+   }
+
+   /////////////////
    /// Reset Button
    if(ImGui::Button("Reset Bounds", {100, 30}))
    {
-      m_renderer.reset_bounds();
+      m_renderer.reset();
+      m_fractal_resolution = m_renderer.fractal_resolution();
+      m_fractal_zoom = m_renderer.fractal_zoom().factor;
       m_state_changed = true;
    }
-
    /////////////////
    ImGui::End();
 }
@@ -107,11 +126,11 @@ void application::update_generator()
    switch (m_fractal_generator_index)
    {
    case 0:
-      m_renderer.set_fractal_generator(fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_algorithm()));
+      m_renderer.set_fractal_generator(fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_palette(), get_selected_colour_algorithm()));
       m_renderer.set_fractal_resolution(m_fractal_resolution);
       break;
    case 1:
-      m_renderer.set_fractal_generator(fractal_generator_factory::create_julia_generator(m_resolution.width, m_resolution.height, get_selected_colour_algorithm(), { -0.8, 0.156 }));
+      m_renderer.set_fractal_generator(fractal_generator_factory::create_julia_generator(m_resolution.width, m_resolution.height, get_selected_colour_palette(), get_selected_colour_algorithm(), {m_julia_c[0], m_julia_c[1]}));
       m_renderer.set_fractal_resolution(m_fractal_resolution);
       break;
    default:
@@ -129,14 +148,37 @@ void application::update_colour_algorithm()
    m_renderer.set_fractal_colour_algorithm(get_selected_colour_algorithm());
 }
 
-colour_gen_func_t application::get_selected_colour_algorithm() const
+colouring::colour_algorithm_func_t application::get_selected_colour_algorithm() const
 {
    switch (m_fractal_colouring_index)
    {
    case 0:
-      return generator_utils::escape_time_colour;
+      return colouring::algorithm::escape_time;
    case 1:
-      return generator_utils::continuous_potential;
+      return colouring::algorithm::continuous_potential;
+   default:
+      break;
+   }
+}
+
+bool application::check_if_colour_palette_changed() const
+{
+   return m_colour_palette_index != m_last_colour_palette_index;
+}
+
+void application::update_colour_palette()
+{
+   m_renderer.set_fractal_colour_palette(get_selected_colour_palette());
+}
+
+palette::colour_from_palette_func_t application::get_selected_colour_palette() const
+{
+   switch (m_colour_palette_index)
+   {
+   case 0:
+      return palette::default_palette::get;
+   case 1:
+      return palette::rainbow::get;
    default:
       break;
    }
@@ -286,6 +328,13 @@ void application::handle_events()
    {
       update_colour_algorithm();
       m_last_fractal_colouring_index = m_fractal_colouring_index;
+      m_state_changed = true;
+   }
+
+   if (check_if_colour_palette_changed())
+   {
+      update_colour_palette();
+      m_last_colour_palette_index = m_colour_palette_index;
       m_state_changed = true;
    }
 }

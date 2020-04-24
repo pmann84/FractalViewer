@@ -26,13 +26,16 @@ public:
    uint32_t core_count() const { return m_num_cores; }
 
    void set_fractal_generator(std::unique_ptr<fractal_generator> generator);
-   void set_fractal_colour_algorithm(colour_gen_func_t func);
+   void set_fractal_colour_algorithm(colouring::colour_algorithm_func_t func);
+   void set_fractal_colour_palette(palette::colour_from_palette_func_t func);
    void set_fractal_resolution(int resolution) const;
+   int32_t fractal_resolution() const;
    void set_fractal_zoom(zoom_action zoom) const;
+   zoom_action fractal_zoom() const;
    void set_fractal_offset(offset_action offset) const;
 
    complex_bounds get_bounds() const { return m_fractal_generator->get_bounds(); }
-   void reset_bounds() const { m_fractal_generator->reset_bounds(); }
+   void reset() const;
 
 private:
    uint32_t m_res_x;

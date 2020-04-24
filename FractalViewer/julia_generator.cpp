@@ -2,12 +2,13 @@
 
 #include <utility>
 
-julia_generator::julia_generator(uint32_t res_x, uint32_t res_y, colour_gen_func_t func, std::complex<double> c)
+julia_generator::julia_generator(uint32_t res_x, uint32_t res_y, palette::colour_from_palette_func_t c_func, colouring::colour_algorithm_func_t algo_func, std::complex<double> c)
    : fractal_generator(std::complex<double>(-2.0, -1.5),
       std::complex<double>(2.0, 1.5),
       res_x,
       res_y,
-      std::move(func))
+      std::move(c_func),
+      std::move(algo_func))
    , m_c(c)
 {
 }
@@ -29,5 +30,6 @@ std::array<uint8_t, 4> julia_generator::get_pixel_color(uint32_t x, uint32_t y)
    }
    // Assign colour based on iteration value
    const double z_abs = sqrt(zn.real() * zn.real() + zn.imag() * zn.imag());
-   return m_colour_gen_func(iteration, m_fractal_resolution, z_abs);
+   return m_colour_from_palette_func(m_colour_algo_func(iteration, m_fractal_resolution, z_abs)).rgba();
+   //return m_colour_gen_func(iteration, m_fractal_resolution, z_abs);
 }

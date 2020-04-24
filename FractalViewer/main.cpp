@@ -5,9 +5,7 @@
 // https://softologyblog.wordpress.com/2019/03/23/automatic-color-palette-creation/
 //
 // TODO: Make some more colour palettes! :D
-// TODO: Fix resolution changes after zooming
-// TODO: Fix zooming with mouse, doesnt work properly
-// TODO: Fix zoom out! Doesn't quite work properly
+// TODO: Implement zooming properly - needs to zoom in and out, also needs to handle the change in fractal resolution
 // TODO: Histogram colouring - single colour range over all histogram
 // TODO: Histogram with multiple colour ranges over the histogram
 // TODO: Work out how to plug in arbitrary fractal parameters to the ui e.g. julia parameter

@@ -7,13 +7,13 @@
 class fractal_generator_factory
 {
 public:
-   static std::unique_ptr<fractal_generator> create_mandelbrot_generator(uint32_t res_x, uint32_t res_y, colour_gen_func_t func)
+   static std::unique_ptr<fractal_generator> create_mandelbrot_generator(uint32_t res_x, uint32_t res_y, palette::colour_from_palette_func_t c_func, colouring::colour_algorithm_func_t algo_func)
    {
-      return std::make_unique<mandelbrot_generator>(res_x, res_y, func);
+      return std::make_unique<mandelbrot_generator>(res_x, res_y, c_func, algo_func);
    }
 
-   static std::unique_ptr<fractal_generator> create_julia_generator(uint32_t res_x, uint32_t res_y, colour_gen_func_t func, std::complex<double> c)
+   static std::unique_ptr<fractal_generator> create_julia_generator(uint32_t res_x, uint32_t res_y, palette::colour_from_palette_func_t c_func, colouring::colour_algorithm_func_t algo_func, std::complex<double> c)
    {
-      return std::make_unique<julia_generator>(res_x, res_y, func, c);
+      return std::make_unique<julia_generator>(res_x, res_y, c_func, algo_func, c);
    }
 };
