@@ -5,9 +5,6 @@ set(PROJECT_NAME "FractalViewer")
 
 add_executable(${PROJECT_NAME})
 
-# get_target_property(IMGUI_SOURCE_DIR imgui SOURCE_DIR)
-# get_target_property(IMGUI_SFML_SOURCE_DIR imgui-sfml SOURCE_DIR)
-
 target_sources(
 	${PROJECT_NAME}
 	PRIVATE
@@ -20,9 +17,6 @@ target_sources(
         ${IMGUI_SOURCE_DIR}/imgui_draw.cpp
         ${IMGUI_SOURCE_DIR}/imgui_widgets.cpp
 )
-
-# OpenGL
-#find_package(OpenGL REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC FractalCore sfml-window sfml-graphics sfml-audio sfml-network sfml-system sfml-main opengl32)
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_SFML_SOURCE_DIR})
