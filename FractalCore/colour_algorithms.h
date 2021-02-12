@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __FRACTAL_CORE_COLOUR_ALGORITHM_H__
+#define __FRACTAL_CORE_COLOUR_ALGORITHM_H__
 
 #include <functional>
 
@@ -6,26 +7,29 @@
 // - the number of iterations it took to converge
 // - the max number of iterations
 // - the final absolute value of z at the end of the iteration
-
-
-namespace colouring
+namespace fractal_core
 {
-   using colour_algorithm_func_t = std::function<float(const uint32_t, const uint32_t, double)>;
-
-   namespace algorithm
+   namespace colouring
    {
-      static float escape_time(const uint32_t iteration_count, const uint32_t max_iterations, double)
-      {
-         return static_cast<float>(iteration_count) / static_cast<float>(max_iterations);
-      }
+      using colour_algorithm_func_t = std::function<float(const uint32_t, const uint32_t, double)>;
 
-      static float continuous_potential(const uint32_t iteration_count, const uint32_t max_iterations, double z_abs)
+      namespace algorithm
       {
-         const float iter_p = static_cast<float>(iteration_count) + 1.0f - logf(logf(z_abs) / (logf(2.0f))) / logf(2.0f);
-         return iter_p / static_cast<float>(max_iterations);
+         static float escape_time(const uint32_t iteration_count, const uint32_t max_iterations, double)
+         {
+            return static_cast<float>(iteration_count) / static_cast<float>(max_iterations);
+         }
+
+         static float continuous_potential(const uint32_t iteration_count, const uint32_t max_iterations, double z_abs)
+         {
+            const float iter_p = static_cast<float>(iteration_count) + 1.0f - logf(logf(z_abs) / (logf(2.0f))) / logf(2.0f);
+            return iter_p / static_cast<float>(max_iterations);
+         }
       }
    }
 }
+#endif // __FRACTAL_CORE_COLOUR_ALGORITHM_H__
+
    //// TODO: Make these just return a single uint32_t to put into the buffer (might not be possible)
    //inline std::array<uint8_t, 4> escape_time_colour(const uint32_t iteration_count, const uint32_t max_iterations, double)
    //{

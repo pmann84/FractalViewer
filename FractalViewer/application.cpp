@@ -14,7 +14,7 @@ application::application(std::string app_name)
    , m_render_time_ms(0)
    , m_state_changed(true)
    , m_julia_c{ -0.8, 0.156 }
-   , m_renderer(m_resolution.width, m_resolution.height, fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_palette(), get_selected_colour_algorithm()))
+   , m_renderer(m_resolution.width, m_resolution.height, fc::fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_palette(), get_selected_colour_algorithm()))
 {
    m_renderer.set_fractal_zoom({
       1.0,
@@ -126,11 +126,11 @@ void application::update_generator()
    switch (m_fractal_generator_index)
    {
    case 0:
-      m_renderer.set_fractal_generator(fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_palette(), get_selected_colour_algorithm()));
+      m_renderer.set_fractal_generator(fc::fractal_generator_factory::create_mandelbrot_generator(m_resolution.width, m_resolution.height, get_selected_colour_palette(), get_selected_colour_algorithm()));
       m_renderer.set_fractal_resolution(m_fractal_resolution);
       break;
    case 1:
-      m_renderer.set_fractal_generator(fractal_generator_factory::create_julia_generator(m_resolution.width, m_resolution.height, get_selected_colour_palette(), get_selected_colour_algorithm(), {m_julia_c[0], m_julia_c[1]}));
+      m_renderer.set_fractal_generator(fc::fractal_generator_factory::create_julia_generator(m_resolution.width, m_resolution.height, get_selected_colour_palette(), get_selected_colour_algorithm(), {m_julia_c[0], m_julia_c[1]}));
       m_renderer.set_fractal_resolution(m_fractal_resolution);
       break;
    default:
@@ -148,14 +148,14 @@ void application::update_colour_algorithm()
    m_renderer.set_fractal_colour_algorithm(get_selected_colour_algorithm());
 }
 
-colouring::colour_algorithm_func_t application::get_selected_colour_algorithm() const
+fc::colouring::colour_algorithm_func_t application::get_selected_colour_algorithm() const
 {
    switch (m_fractal_colouring_index)
    {
    case 0:
-      return colouring::algorithm::escape_time;
+      return fc::colouring::algorithm::escape_time;
    case 1:
-      return colouring::algorithm::continuous_potential;
+      return fc::colouring::algorithm::continuous_potential;
    default:
       break;
    }
@@ -171,14 +171,14 @@ void application::update_colour_palette()
    m_renderer.set_fractal_colour_palette(get_selected_colour_palette());
 }
 
-palette::colour_from_palette_func_t application::get_selected_colour_palette() const
+fc::palette::colour_from_palette_func_t application::get_selected_colour_palette() const
 {
    switch (m_colour_palette_index)
    {
    case 0:
-      return palette::default_palette::get;
+      return fc::palette::default_palette::get;
    case 1:
-      return palette::rainbow::get;
+      return fc::palette::rainbow::get;
    default:
       break;
    }
@@ -187,7 +187,7 @@ palette::colour_from_palette_func_t application::get_selected_colour_palette() c
 void application::zoom_in()
 {
    m_fractal_zoom /= m_fractal_zoom_factor;
-   const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
+   const fc::zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
    //std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
    m_renderer.set_fractal_zoom(zoom);
    m_state_changed = true;
@@ -200,7 +200,7 @@ void application::zoom_out()
    {
       m_fractal_zoom = m_fractal_zoom_min;
    }
-   const zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
+   const fc::zoom_action zoom{ m_fractal_zoom, sf::Mouse::getPosition().x, sf::Mouse::getPosition().y };
    //std::cout << "Setting zoom factor " << m_fractal_zoom << " at (" << sf::Mouse::getPosition().x << "," << sf::Mouse::getPosition().y << ")" << std::endl;
    m_renderer.set_fractal_zoom(zoom);
    m_state_changed = true;
@@ -265,28 +265,28 @@ void application::handle_events()
                }
                case sf::Keyboard::Left:
                {
-                  const offset_action l_offset{ -1, 0 };
+                  const fc::offset_action l_offset{ -1, 0 };
                   m_renderer.set_fractal_offset(l_offset);
                   m_state_changed = true;
                   break;
                }
                case sf::Keyboard::Right:
                {
-                  const offset_action r_offset{ 1, 0 };
+                  const fc::offset_action r_offset{ 1, 0 };
                   m_renderer.set_fractal_offset(r_offset);
                   m_state_changed = true;
                   break;
                }
                case sf::Keyboard::Up:
                {
-                  const offset_action u_offset{ 0, 1 };
+                  const fc::offset_action u_offset{ 0, 1 };
                   m_renderer.set_fractal_offset(u_offset);
                   m_state_changed = true;
                   break;
                }
                case sf::Keyboard::Down:
                {
-                  const offset_action offset{ 0, -1 };
+                  const fc::offset_action offset{ 0, -1 };
                   m_renderer.set_fractal_offset(offset);
                   m_state_changed = true;
                   break;

@@ -25,7 +25,7 @@ target_sources(
 # This tells applications that use this
 # library what the include directory is
 target_include_directories(
-	${PROJECT_NAME}
+        ${PROJECT_NAME}
 	PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )

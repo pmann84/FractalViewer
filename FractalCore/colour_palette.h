@@ -1,56 +1,61 @@
-#pragma once
+#ifndef __FRACTAL_CORE_COLOUR_PALETTE_H__
+#define __FRACTAL_CORE_COLOUR_PALETTE_H__
 
 #include "colour.h"
 #include "colour_algorithms.h"
 
 #include <functional>
 
-namespace palette
+namespace fractal_core
 {
-   using colour_from_palette_func_t = std::function<colour(float)>;
-   namespace
+   namespace palette
    {
-      float get(float t, float amplitude, float frequency, float horizontal_offset, float vertical_offset)
+      using colour_from_palette_func_t = std::function<colour(float)>;
+      namespace
       {
-         static const float pi = 3.141592654f;
-         return amplitude * sin(2.0f*pi*(frequency*t + horizontal_offset)) + vertical_offset;
+         float get(float t, float amplitude, float frequency, float horizontal_offset, float vertical_offset)
+         {
+            static const float pi = 3.141592654f;
+            return amplitude * sin(2.0f*pi*(frequency*t + horizontal_offset)) + vertical_offset;
+         }
+
+         colour get(float t, colour amplitude, colour frequency, colour horizontal_offset, colour vertical_offset)
+         {
+            const float r = get(t, amplitude.r(), frequency.r(), horizontal_offset.r(), vertical_offset.r());
+            const float g = get(t, amplitude.g(), frequency.g(), horizontal_offset.g(), vertical_offset.g());
+            const float b = get(t, amplitude.b(), frequency.b(), horizontal_offset.b(), vertical_offset.b());
+            return { r, g, b };
+         }
       }
 
-      colour get(float t, colour amplitude, colour frequency, colour horizontal_offset, colour vertical_offset)
+      namespace default_palette
       {
-         const float r = get(t, amplitude.r(), frequency.r(), horizontal_offset.r(), vertical_offset.r());
-         const float g = get(t, amplitude.g(), frequency.g(), horizontal_offset.g(), vertical_offset.g());
-         const float b = get(t, amplitude.b(), frequency.b(), horizontal_offset.b(), vertical_offset.b());
-         return { r, g, b };
+         static colour get(float t)
+         {
+            const float num_colours = 256.0f;
+            const colour amplitude = { 0.5f, 0.5f, 0.5f };
+            const colour frequency = { 0.00390635f, 0.00390635f, 0.00390635f };
+            const colour horizontal_off = { 0.644f, 1.76067f, 2.87733f };
+            const colour vertical_off = { 0.5f, 0.5f, 0.5f };
+            return palette::get(t * num_colours, amplitude, frequency, horizontal_off, vertical_off);
+         }
       }
-   }
 
-   namespace default_palette
-   {
-      static colour get(float t)
+      namespace rainbow
       {
-         const float num_colours = 256.0f;
-         const colour amplitude = { 0.5f, 0.5f, 0.5f };
-         const colour frequency = { 0.00390635f, 0.00390635f, 0.00390635f };
-         const colour horizontal_off = { 0.644f, 1.76067f, 2.87733f };
-         const colour vertical_off = { 0.5f, 0.5f, 0.5f };
-         return palette::get(t * num_colours, amplitude, frequency, horizontal_off, vertical_off);
-      }
-   }
-
-   namespace rainbow
-   {
-      static colour get(float t)
-      {
-         const float num_colours = 256.0f;
-         const colour amplitude = { 0.5f, 0.5f, 0.5f };
-         const colour frequency = { 0.00390635f, 0.00390635f, 0.00390635f };
-         const colour horizontal_off = { 0.0f, 0.6666f, 1.333333f };
-         const colour vertical_off = { 0.5f, 0.5f, 0.5f };
-         return palette::get(t * num_colours, amplitude, frequency, horizontal_off, vertical_off);
+         static colour get(float t)
+         {
+            const float num_colours = 256.0f;
+            const colour amplitude = { 0.5f, 0.5f, 0.5f };
+            const colour frequency = { 0.00390635f, 0.00390635f, 0.00390635f };
+            const colour horizontal_off = { 0.0f, 0.6666f, 1.333333f };
+            const colour vertical_off = { 0.5f, 0.5f, 0.5f };
+            return palette::get(t * num_colours, amplitude, frequency, horizontal_off, vertical_off);
+         }
       }
    }
 }
+#endif // __FRACTAL_CORE_COLOUR_PALETTE_H__
 
 //#include <array>
 //#include <initializer_list>

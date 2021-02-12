@@ -4,3 +4,6 @@
 [submodule "vendor/imgui-sfml"]
 	path = vendor/imgui-sfml
 	url = https://github.com/eliasdaler/imgui-sfml
+[submodule "vendor/SFML"]
+	path = vendor/SFML
+	url = https://github.com/SFML/SFML.git

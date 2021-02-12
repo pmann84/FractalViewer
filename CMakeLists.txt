@@ -10,11 +10,11 @@ project(
 # Disable the ZERO_CHECK project generation
 set(CMAKE_SUPPRESS_REGENERATION true)
 
-
 # Third party libs
-#add_subdirectory(vendor)
+add_subdirectory(vendor)
 
 # Fractal Library
 add_subdirectory(FractalCore)
-# Application
-#add_subdirectory(FractalViewer)
+
+# Fractal Viewer
+add_subdirectory(FractalViewer)

@@ -53,11 +53,11 @@ private:
 
    bool check_if_colour_algorithm_changed() const;
    void update_colour_algorithm();
-   colouring::colour_algorithm_func_t get_selected_colour_algorithm() const;
+   fc::colouring::colour_algorithm_func_t get_selected_colour_algorithm() const;
 
    bool check_if_colour_palette_changed() const;
    void update_colour_palette();
-   palette::colour_from_palette_func_t get_selected_colour_palette() const;
+   fc::palette::colour_from_palette_func_t get_selected_colour_palette() const;
 
    void zoom_in();
    void zoom_out();
