@@ -1,8 +1,12 @@
+# Folders
 .vs
+.vscode
 x64
 Debug
 Release
+cmake_*
 
+# Files
 *.user
 *.psess
 *.vspx
