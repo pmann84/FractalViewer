@@ -23,7 +23,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_SFML_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SFML_INCLUDE_DIR})
 
-message(${SFML_BINARY_DIR}/lib/$<CONFIG>)
 # Custom post build command to copy shared libs
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD # Add post build to app project
