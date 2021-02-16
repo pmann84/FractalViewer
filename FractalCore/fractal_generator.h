@@ -3,6 +3,7 @@
 
 #include "colour_palette.h"
 #include "complex_bounds.h"
+#include "resolution.h"
 
 #include <array>
 #include <functional>
@@ -15,12 +16,11 @@ namespace fractal_core
    public:
       fractal_generator(
          std::complex<double> min, std::complex<double> max, 
-         uint32_t x_res, uint32_t y_res, palette::colour_from_palette_func_t c_func, colouring::colour_algorithm_func_t algo_func)
+         resolution res, palette::colour_from_palette_func_t c_func, colouring::colour_algorithm_func_t algo_func)
          : m_fractal_resolution(30)
          , m_init_fractal_resolution(m_fractal_resolution)
          , m_bounds(min, max)
-         , m_x_res(x_res)
-         , m_y_res(y_res)
+         , m_res(res)
          , m_colour_from_palette_func(std::move(c_func))
          , m_colour_algo_func(std::move(algo_func))
       {
@@ -32,7 +32,7 @@ namespace fractal_core
 
       std::complex<double> complex_from_pixel(uint32_t x_pixel, uint32_t y_pixel) const
       {
-         return m_bounds.complex_from_pixel(x_pixel, m_x_res, y_pixel, m_y_res);
+         return m_bounds.complex_from_pixel(x_pixel, m_res.x, y_pixel, m_res.y);
       }
 
       complex_bounds get_bounds() const { return m_bounds; }
@@ -57,7 +57,7 @@ namespace fractal_core
       void set_fractal_zoom(zoom_action fractal_zoom)
       {
          m_fractal_zoom = fractal_zoom;
-         m_bounds.zoom(fractal_zoom, m_x_res, m_y_res);
+         m_bounds.zoom(fractal_zoom, m_res.x, m_res.y);
       }
 
       zoom_action fractal_zoom() const { return m_fractal_zoom; }
@@ -86,8 +86,7 @@ namespace fractal_core
       int32_t m_init_fractal_resolution;
       zoom_action m_fractal_zoom;
       complex_bounds m_bounds;
-      uint32_t m_x_res;
-      uint32_t m_y_res;
+      resolution m_res;
       palette::colour_from_palette_func_t m_colour_from_palette_func;
       colouring::colour_algorithm_func_t m_colour_algo_func;
    };

@@ -4,11 +4,10 @@
 
 namespace fractal_core
 {
-   julia_generator::julia_generator(uint32_t res_x, uint32_t res_y, palette::colour_from_palette_func_t c_func, colouring::colour_algorithm_func_t algo_func, std::complex<double> c)
+   julia_generator::julia_generator(resolution res, palette::colour_from_palette_func_t c_func, colouring::colour_algorithm_func_t algo_func, std::complex<double> c)
       : fractal_generator(std::complex<double>(-2.0, -1.5),
          std::complex<double>(2.0, 1.5),
-         res_x,
-         res_y,
+         res,
          std::move(c_func),
          std::move(algo_func))
       , m_c(c)

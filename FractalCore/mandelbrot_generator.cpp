@@ -4,7 +4,7 @@
 
 namespace fractal_core
 {
-   mandelbrot_generator::mandelbrot_generator(uint32_t res_x, uint32_t res_y, palette::colour_from_palette_func_t c_func, colouring::colour_algorithm_func_t algo_func)
+   mandelbrot_generator::mandelbrot_generator(resolution res, palette::colour_from_palette_func_t c_func, colouring::colour_algorithm_func_t algo_func)
       : fractal_generator(std::complex<double>(-3.0, -1.5),
                         std::complex<double>(1.5, 1.5),
                         res_x,
